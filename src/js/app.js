@@ -1,22 +1,22 @@
 const character = document.getElementById("ninjaman");
+const btnRefresh = document.getElementById("btnRefresh");
 const scoreContainer = document.getElementById("score");
 const worldContainer = document.getElementById('world');
 
 const boxSize = 40;
-let leftValue = boxSize, topValue = boxSize;
 let score = 0;
 
-const map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-    [1, 0, 2, 3, 0, 0, 1, 2, 0, 1], 
-    [1, 2, 1, 0, 1, 1, 1, 1, 3, 1], 
-    [1, 2, 0, 2, 0, 1, 1, 1, 0, 1], 
-    [1, 1, 0, 3, 0, 0, 1, 0, 0, 1],
-    [1, 2, 1, 0, 0, 2, 1, 3, 0, 1], 
-    [1, 0, 1, 0, 2, 0, 1, 0, 1, 1],
-    [1, 2, 0, 3, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 3, 0, 0, 1, 1, 3, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+let map = [
+    // [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+    // [1, 0, 2, 3, 0, 0, 1, 2, 0, 1], 
+    // [1, 2, 1, 0, 1, 1, 1, 1, 3, 1], 
+    // [1, 2, 0, 2, 0, 1, 1, 1, 0, 1], 
+    // [1, 1, 0, 3, 0, 0, 1, 0, 0, 1],
+    // [1, 2, 1, 0, 0, 2, 1, 3, 0, 1], 
+    // [1, 0, 1, 0, 2, 0, 1, 0, 1, 1],
+    // [1, 2, 0, 3, 0, 0, 0, 0, 0, 1],
+    // [1, 0, 0, 3, 0, 0, 1, 1, 3, 1],
+    // [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
 const mapGuide = {
@@ -29,10 +29,40 @@ const mapGuide = {
 let characterCords = {
     x: 1,
     y: 1
-} 
+}
+
+function randomColumn(min, max) {
+    let column = [];
+
+    for(let i = 0; i < 10; i++) {
+        if(i === 0 || i === 9) {
+            column.push(1);
+        } else {
+            column.push(Math.floor(Math.random() * (max - min + 1) + min));
+        }
+    }
+
+    return column;
+}
 
 function mapGenerator() {
+    let row = [];
 
+    for(let i = 0; i < 10; i++) {
+        if(i === 0 || i === 9) {
+            row.push(randomColumn(1,1));
+        } else {
+            row.push(randomColumn(0, 3));
+        }
+    }
+
+    // Clear Character Start Position
+    row[1][1] = 0;
+
+    map = row;
+}
+
+function drawMap() {
     worldContainer.innerHTML = '';
 
     for(let i = 0; i < map.length; i++) {
@@ -144,13 +174,24 @@ function move(e) {
         }
     }
 
-    mapGenerator();
+    drawMap();
     spawnCharacter();
 }
 
-mapGenerator();
-spawnCharacter();
+function start() {
+    score = 0;
+    scoreContainer.querySelector('span').innerHTML = score;
+    mapGenerator();
+    drawMap();
+    spawnCharacter();
+}
+
+start();
 
 document.onkeydown = function(e) {
     move(e);
 }
+
+btnRefresh.addEventListener('click', function() {
+    start();
+});
