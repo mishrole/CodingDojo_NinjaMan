@@ -16,6 +16,10 @@
     background-image: url("../img/sushi.png");
 }
 
+.onigiri {
+    background-image: url("../img/onigiri.png");
+}
+
 #ninjaman {
     background-image: url("../img/ninja.gif");
     position: absolute;
@@ -35,16 +39,16 @@
     padding: 0 0.5rem;
 }
 
-.sushi, #ninjaman {
+.sushi, .onigiri, #ninjaman {
     background-repeat: no-repeat;
     background-size: contain;
 }
 
-.blank, .sushi, #ninjaman {
+.blank, .sushi, .onigiri, #ninjaman {
     background-color: black;
 }
 
-.blank, .sushi, .wall, #ninjaman {
+.blank, .sushi, .wall, .onigiri, #ninjaman {
     height: 40px;
     width: 40px;
 }

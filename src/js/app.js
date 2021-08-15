@@ -8,21 +8,22 @@ let score = 0;
 
 const map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-    [1, 0, 2, 2, 0, 0, 1, 2, 0, 1], 
-    [1, 2, 1, 0, 1, 1, 1, 1, 2, 1], 
+    [1, 0, 2, 3, 0, 0, 1, 2, 0, 1], 
+    [1, 2, 1, 0, 1, 1, 1, 1, 3, 1], 
     [1, 2, 0, 2, 0, 1, 1, 1, 0, 1], 
-    [1, 1, 0, 2, 0, 0, 1, 0, 0, 1],
-    [1, 2, 1, 0, 0, 2, 1, 2, 0, 1], 
+    [1, 1, 0, 3, 0, 0, 1, 0, 0, 1],
+    [1, 2, 1, 0, 0, 2, 1, 3, 0, 1], 
     [1, 0, 1, 0, 2, 0, 1, 0, 1, 1],
-    [1, 2, 0, 2, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 2, 0, 0, 1, 1, 2, 1],
+    [1, 2, 0, 3, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 3, 0, 0, 1, 1, 3, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
 const mapGuide = {
     0: 'blank',
     1: 'wall',
-    2: 'sushi'
+    2: 'sushi',
+    3: 'onigiri'
 }
 
 let characterCords = {
@@ -73,15 +74,28 @@ function isMoveValid(nextMove, e) {
 }
 
 function eat(nextMove, e) {
+
+    let data = {}
+
     if(e.keyCode == 37 || e.keyCode == 39) {
-        if(map[characterCords.y][nextMove] === 2) {
-            map[characterCords.y][nextMove] = 0;
-            score++;
-        }
+        data.element = map[characterCords.y][nextMove];
+        data.direction = 'horizontal';
     } else if(e.keyCode == 38 || e.keyCode == 40) {
-        if(map[nextMove][characterCords.x] === 2) {
+        data.element = map[nextMove][characterCords.x];
+        data.direction = 'vertical';
+    }
+
+    if(Object.keys(data).length > 0) {
+        if(data.element === 2) {
+            score+=10;
+        } else if (data.element === 3) {
+            score+=5;
+        }
+    
+        if(data.direction === 'vertical') {
             map[nextMove][characterCords.x] = 0;
-            score++;
+        } else if(data.direction === 'horizontal') {
+            map[characterCords.y][nextMove] = 0;
         }
     }
 
