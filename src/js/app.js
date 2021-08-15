@@ -5,19 +5,7 @@ const worldContainer = document.getElementById('world');
 
 const boxSize = 40;
 let score = 0;
-
-let map = [
-    // [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-    // [1, 0, 2, 3, 0, 0, 1, 2, 0, 1], 
-    // [1, 2, 1, 0, 1, 1, 1, 1, 3, 1], 
-    // [1, 2, 0, 2, 0, 1, 1, 1, 0, 1], 
-    // [1, 1, 0, 3, 0, 0, 1, 0, 0, 1],
-    // [1, 2, 1, 0, 0, 2, 1, 3, 0, 1], 
-    // [1, 0, 1, 0, 2, 0, 1, 0, 1, 1],
-    // [1, 2, 0, 3, 0, 0, 0, 0, 0, 1],
-    // [1, 0, 0, 3, 0, 0, 1, 1, 3, 1],
-    // [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-];
+let map = [];
 
 const mapGuide = {
     0: 'blank',
@@ -179,8 +167,14 @@ function move(e) {
 }
 
 function start() {
+    // Reset Score
     score = 0;
     scoreContainer.querySelector('span').innerHTML = score;
+    // Reset Character Position
+    characterCords = {
+        x: 1,
+        y: 1
+    }
     mapGenerator();
     drawMap();
     spawnCharacter();

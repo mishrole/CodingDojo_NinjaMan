@@ -25,6 +25,26 @@
     position: absolute;
 }
 
+.ghost {
+    position: absolute;
+}
+
+#bluey {
+    background-image: url("../img/bluey.gif");
+}
+
+#pinky {
+    background-image: url("../img/pinky.gif");
+}
+
+#pumpky {
+    background-image: url("../img/pumpky.gif");
+}
+
+#red {
+    background-image: url("../img/red.gif");
+}
+
 #score {
     align-items: center;
     color: white;
@@ -61,16 +81,16 @@
     padding: 0 0.5rem;
 }
 
-.sushi, .onigiri, #ninjaman {
+.sushi, .onigiri, .ghost, #ninjaman {
     background-repeat: no-repeat;
     background-size: contain;
 }
 
-.blank, .sushi, .onigiri, #ninjaman {
+.blank, .sushi, .onigiri, .ghost, #ninjaman {
     background-color: black;
 }
 
-.blank, .sushi, .wall, .onigiri, #ninjaman {
+.blank, .sushi, .wall, .onigiri, .ghost, #ninjaman {
     height: 40px;
     width: 40px;
 }
