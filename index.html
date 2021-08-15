@@ -93,11 +93,11 @@
 
         var world = document.getElementById('world');
         var map = [
-            ['wall', 'wall', 'wall', 'wall', 'wall'], 
-            ['wall', 'blank', 'sushi', 'sushi', 'wall'], 
-            ['wall', 'sushi', 'wall', 'blank', 'wall'], 
-            ['wall', 'sushi', 'blank', 'sushi', 'wall'], 
-            ['wall', 'wall', 'blank', 'sushi', 'wall']
+            [1, 1, 1, 1, 1], 
+            [1, 0, 2, 2, 1], 
+            [1, 2, 1, 0, 1], 
+            [1, 2, 0, 2, 1], 
+            [1, 1, 0, 2, 1]
         ];
 
         for(var i = 0; i < map.length; i++) {
@@ -106,7 +106,19 @@
 
             for(var j = 0; j < map[i].length; j++) {
                 var element = document.createElement('div');
-                element.className = map[i][j];
+                var current = map[i][j];
+
+                switch(current) {
+                    case 1:
+                        element.className = 'wall';
+                        break;
+                    case 2:
+                        element.className = 'sushi';
+                        break;
+                    default:
+                        element.className = 'blank';
+                }
+
                 rowElement.append(element);
             }
 
