@@ -37,8 +37,6 @@
         #ninjaman {
             background-image: url("img/ninja.gif");
             position: absolute;
-            left: 40px;
-            top: 40px;
         }
 
         .blank, .sushi, #ninjaman {
@@ -51,8 +49,12 @@
     <div id="ninjaman"></div>
 
     <script>
-
+        const boxSize = 40;
+        
         const worldContainer = document.getElementById('world');
+        const character = document.getElementById("ninjaman");
+
+        let leftValue = boxSize, topValue = boxSize;
 
         const map = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
@@ -71,6 +73,11 @@
             0: 'blank',
             1: 'wall',
             2: 'sushi'
+        }
+
+        let characterCords = {
+            x: 8,
+            y: 1
         }
 
         function mapGenerator() {
@@ -92,18 +99,18 @@
 
         mapGenerator();
 
-        var leftValue = 40, topValue = 40;
-
-        var character = document.getElementById("ninjaman");
-
-        function update() {
-            character.style.left = `${leftValue}px`;
-            character.style.top = `${topValue}px`;
+        function spawnCharacter() {
+            character.style.top = `${characterCords.y * boxSize}px`;
+            character.style.left = `${characterCords.x * boxSize}px`;
         }
 
+        spawnCharacter();
+
         function isMoveValid(move) {
-            var max = map.length * 40, min = 0;
-			if(move >= min && move < max) {
+            let max = map.length * boxSize, min = 0;
+            let currentMove = move * boxSize;
+
+			if(currentMove >= min && currentMove < max) {
 				return true;
 			}
 
@@ -112,42 +119,43 @@
 
         function move(e) {
             if(e.keyCode == 37) { // LEFT
-				var move = leftValue - 40;
+				let move = characterCords.x - 1;
 				
 				if(isMoveValid(move)) {
                     character.style.transform = 'scale(-1, 1)';
-					leftValue = move;
+                    characterCords.x = characterCords.x - 1;
 				}
 			}
 			else if(e.keyCode == 38) { // TOP;
-				var move = topValue - 40;
+				let move = characterCords.y - 1;
 
 				if(isMoveValid(move)) {
                     character.style.transform = 'rotate(270deg)';
-					topValue = move;
+                    characterCords.y = characterCords.y - 1;
 				}
 			}
 			else if (e.keyCode == 39) { // RIGHT
-				var move = leftValue + 40;
+				let move = characterCords.x + 1;
 
 				if(isMoveValid(move)) {
                     character.style.transform = '';
-					leftValue = move;
+                    characterCords.x = characterCords.x + 1;
 				} 		
 			}
 			else if (e.keyCode == 40) { // DOWN
-				var move = topValue + 40;
+				let move = characterCords.y + 1;
 
 				if(isMoveValid(move)) {
                     character.style.transform = 'rotate(90deg)';
-					topValue = move;
+                    characterCords.y = characterCords.y + 1;
 				}
 			}
+
+            spawnCharacter();
         }
 
         document.onkeydown = function(e) {
             move(e);
-    		update();
         }
 
     </script>
