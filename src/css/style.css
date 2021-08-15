@@ -27,6 +27,7 @@
 
 .ghost {
     position: absolute;
+    opacity: 0.4;
 }
 
 #bluey {
