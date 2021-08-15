@@ -1,8 +1,10 @@
-const worldContainer = document.getElementById('world');
 const character = document.getElementById("ninjaman");
+const scoreContainer = document.getElementById("score");
+const worldContainer = document.getElementById('world');
 
 const boxSize = 40;
 let leftValue = boxSize, topValue = boxSize;
+let score = 0;
 
 const map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
@@ -74,12 +76,16 @@ function eat(nextMove, e) {
     if(e.keyCode == 37 || e.keyCode == 39) {
         if(map[characterCords.y][nextMove] === 2) {
             map[characterCords.y][nextMove] = 0;
+            score++;
         }
     } else if(e.keyCode == 38 || e.keyCode == 40) {
         if(map[nextMove][characterCords.x] === 2) {
             map[nextMove][characterCords.x] = 0;
+            score++;
         }
     }
+
+    scoreContainer.querySelector('span').innerHTML = score;
 }
 
 function move(e) {
@@ -100,7 +106,7 @@ function move(e) {
 
         if(isMoveValid(nextMove, e)) {
             characterCords.y--;
-            eatSushi(nextMove, e);
+            eat(nextMove, e);
         }
     }
     // RIGHT
@@ -110,7 +116,7 @@ function move(e) {
 
         if(isMoveValid(nextMove, e)) {
             characterCords.x++;
-            eatSushi(nextMove, e);
+            eat(nextMove, e);
         } 		
     }
     // DOWN
@@ -120,7 +126,7 @@ function move(e) {
 
         if(isMoveValid(nextMove, e)) {
             characterCords.y++;
-            eatSushi(nextMove, e);
+            eat(nextMove, e);
         }
     }
 

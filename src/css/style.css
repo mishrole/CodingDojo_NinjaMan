@@ -8,18 +8,8 @@
     display: flex;
 }
 
-.wall, .sushi, .blank, #ninjaman {
-    height: 40px;
-    width: 40px;
-}
-
 .wall  {
     background-color: blue;
-}
-
-.sushi, #ninjaman {
-    background-repeat: no-repeat;
-    background-size: contain;
 }
 
 .sushi {
@@ -31,6 +21,30 @@
     position: absolute;
 }
 
+#score {
+    align-items: center;
+    color: white;
+    display: flex;
+    height: 40px;
+    left: 40px;
+    position: absolute;
+    width: 120px;
+}
+
+#score > span {
+    padding: 0 0.5rem;
+}
+
+.sushi, #ninjaman {
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
 .blank, .sushi, #ninjaman {
     background-color: black;
+}
+
+.blank, .sushi, .wall, #ninjaman {
+    height: 40px;
+    width: 40px;
 }
