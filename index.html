@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NinjaMan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .wall, .sushi, .blank, #ninjaman {
+            height: 40px;
+            width: 40px;
+        }
+
+        .wall  {
+            background-color: blue;
+        }
+
+        .sushi, #ninjaman {
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+
+        .sushi {
+            background-image: url("img/sushi.png");
+        }
+
+        #ninjaman {
+            background-image: url("img/ninja.gif");
+            position: absolute;
+            left: 40px;
+            top: 40px;
+        }
+
+        .blank, .sushi, #ninjaman {
+            background-color: black;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="world">
+        <div class="row">
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+        </div>
+        <div class="row">
+            <div class="wall"></div>
+            <div class="blank"></div>
+            <div class="sushi"></div>
+            <div class="sushi"></div>
+            <div class="wall"></div>
+        </div>
+        <div class="row">
+            <div class="wall"></div>
+            <div class="sushi"></div>
+            <div class="wall"></div>
+            <div class="blank"></div>
+            <div class="wall"></div>
+        </div>
+        <div class="row">
+            <div class="wall"></div>
+            <div class="sushi"></div>
+            <div class="blank"></div>
+            <div class="sushi"></div>
+            <div class="wall"></div>
+        </div>
+        <div class="row">
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="blank"></div>
+            <div class="sushi"></div>
+            <div class="wall"></div>
+        </div>
+    </div>
+    <div id="ninjaman">
+
+    </div>
+</body>
+</html>
