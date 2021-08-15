@@ -91,8 +91,9 @@
 
     <script>
 
-        var world = document.getElementById('world');
-        var map = [
+        const worldContainer = document.getElementById('world');
+
+        const map = [
             [1, 1, 1, 1, 1], 
             [1, 0, 2, 2, 1], 
             [1, 2, 1, 0, 1], 
@@ -100,30 +101,30 @@
             [1, 1, 0, 2, 1]
         ];
 
-        for(var i = 0; i < map.length; i++) {
-            var rowElement = document.createElement('div');
-            rowElement.className = 'row';
+        const mapGuide = {
+            0: 'blank',
+            1: 'wall',
+            2: 'sushi'
+        }
 
-            for(var j = 0; j < map[i].length; j++) {
-                var element = document.createElement('div');
-                var current = map[i][j];
+        function mapGenerator() {
+            for(let i = 0; i < map.length; i++) {
+                let rowContainer = document.createElement('div');
+                rowContainer.className = 'row';
 
-                switch(current) {
-                    case 1:
-                        element.className = 'wall';
-                        break;
-                    case 2:
-                        element.className = 'sushi';
-                        break;
-                    default:
-                        element.className = 'blank';
+                for(let j = 0; j < map[i].length; j++) {
+                    let elementContainer = document.createElement('div');
+                    let currentElement = map[i][j];
+                    
+                    elementContainer.className = mapGuide[currentElement];
+                    rowContainer.append(elementContainer);
                 }
 
-                rowElement.append(element);
+                worldContainer.append(rowContainer);
             }
-
-            world.append(rowElement);
         }
+
+        mapGenerator();
 
     </script>
 </body>
