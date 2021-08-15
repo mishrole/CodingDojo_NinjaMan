@@ -55,14 +55,16 @@
         const worldContainer = document.getElementById('world');
 
         const map = [
-            [1, 1, 1, 1, 1], 
-            [1, 0, 2, 2, 1], 
-            [1, 2, 1, 0, 1], 
-            [1, 2, 0, 2, 1], 
-            [1, 1, 0, 2, 1],
-            [1, 2, 1, 0, 1], 
-            [1, 0, 1, 0, 1],
-            [1, 2, 0, 2, 1] 
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+            [1, 0, 2, 2, 0, 0, 1, 2, 0, 1], 
+            [1, 2, 1, 0, 1, 1, 1, 1, 2, 1], 
+            [1, 2, 0, 2, 0, 1, 1, 1, 0, 1], 
+            [1, 1, 0, 2, 0, 0, 1, 0, 0, 1],
+            [1, 2, 1, 0, 0, 2, 1, 2, 0, 1], 
+            [1, 0, 1, 0, 2, 0, 1, 0, 1, 1],
+            [1, 2, 0, 2, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 2, 0, 0, 1, 1, 2, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ];
 
         const mapGuide = {
@@ -89,6 +91,64 @@
         }
 
         mapGenerator();
+
+        var leftValue = 40, topValue = 40;
+
+        var character = document.getElementById("ninjaman");
+
+        function update() {
+            character.style.left = `${leftValue}px`;
+            character.style.top = `${topValue}px`;
+        }
+
+        function isMoveValid(move) {
+            var max = map.length * 40, min = 0;
+			if(move >= min && move < max) {
+				return true;
+			}
+
+			return false;
+		}
+
+        function move(e) {
+            if(e.keyCode == 37) { // LEFT
+				var move = leftValue - 40;
+				
+				if(isMoveValid(move)) {
+                    character.style.transform = 'scale(-1, 1)';
+					leftValue = move;
+				}
+			}
+			else if(e.keyCode == 38) { // TOP;
+				var move = topValue - 40;
+
+				if(isMoveValid(move)) {
+                    character.style.transform = 'rotate(270deg)';
+					topValue = move;
+				}
+			}
+			else if (e.keyCode == 39) { // RIGHT
+				var move = leftValue + 40;
+
+				if(isMoveValid(move)) {
+                    character.style.transform = '';
+					leftValue = move;
+				} 		
+			}
+			else if (e.keyCode == 40) { // DOWN
+				var move = topValue + 40;
+
+				if(isMoveValid(move)) {
+                    character.style.transform = 'rotate(90deg)';
+					topValue = move;
+				}
+			}
+        }
+
+        document.onkeydown = function(e) {
+            move(e);
+    		update();
+        }
 
     </script>
 </body>
