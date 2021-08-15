@@ -29,6 +29,9 @@ let characterCords = {
 } 
 
 function mapGenerator() {
+
+    worldContainer.innerHTML = '';
+
     for(let i = 0; i < map.length; i++) {
         let rowContainer = document.createElement('div');
         rowContainer.className = 'row';
@@ -51,16 +54,15 @@ function spawnCharacter() {
 }
 
 function isMoveValid(nextMove, e) {
-    if(e.keyCode == 37 || e.keyCode == 39) { // LEFT || RIGHT
-        // console.log(`Current/Next Column: ${nextMove} | Current/Next Element Type: ${map[characterCords.y][nextMove]}`);
-        // map[row][column]
+    // LEFT || RIGHT
+    if(e.keyCode == 37 || e.keyCode == 39) {
         if(map[characterCords.y][nextMove] !== 1) {
             return true;
         }
         return false;
-    } else if (e.keyCode == 38 || e.keyCode == 40) { // UP // DOWN
-        // console.log(`Current/Next Row: ${nextMove} | Current/Next Element Type: ${map[nextMove][characterCords.x]}`);
-        // map[row][column]
+    } 
+    // UP || DOWN
+    else if (e.keyCode == 38 || e.keyCode == 40) {
         if(map[nextMove][characterCords.x] !== 1) {
             return true;
         }
@@ -68,40 +70,61 @@ function isMoveValid(nextMove, e) {
     }
 }
 
+function eat(nextMove, e) {
+    if(e.keyCode == 37 || e.keyCode == 39) {
+        if(map[characterCords.y][nextMove] === 2) {
+            map[characterCords.y][nextMove] = 0;
+        }
+    } else if(e.keyCode == 38 || e.keyCode == 40) {
+        if(map[nextMove][characterCords.x] === 2) {
+            map[nextMove][characterCords.x] = 0;
+        }
+    }
+}
+
 function move(e) {
-    if(e.keyCode == 37) { // LEFT
+    // LEFT
+    if(e.keyCode == 37) {
         let nextMove = characterCords.x - 1;
         character.style.transform = 'scale(-1, 1)';
         
         if(isMoveValid(nextMove, e)) {
             characterCords.x--;
+            eat(nextMove, e);
         }
     }
-    else if(e.keyCode == 38) { // TOP;
+    // TOP
+    else if(e.keyCode == 38) {
         let nextMove = characterCords.y - 1;
         character.style.transform = 'rotate(270deg)';
 
         if(isMoveValid(nextMove, e)) {
             characterCords.y--;
+            eatSushi(nextMove, e);
         }
     }
-    else if (e.keyCode == 39) { // RIGHT
+    // RIGHT
+    else if (e.keyCode == 39) {
         let nextMove = characterCords.x + 1;
         character.style.transform = '';
 
         if(isMoveValid(nextMove, e)) {
             characterCords.x++;
+            eatSushi(nextMove, e);
         } 		
     }
-    else if (e.keyCode == 40) { // DOWN
+    // DOWN
+    else if (e.keyCode == 40) {
         let nextMove = characterCords.y + 1;
         character.style.transform = 'rotate(90deg)';
 
         if(isMoveValid(nextMove, e)) {
             characterCords.y++;
+            eatSushi(nextMove, e);
         }
     }
 
+    mapGenerator();
     spawnCharacter();
 }
 
