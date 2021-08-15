@@ -50,48 +50,55 @@ function spawnCharacter() {
     character.style.left = `${characterCords.x * boxSize}px`;
 }
 
-function isMoveValid(move) {
-    let max = map.length * boxSize, min = 0;
-    let currentMove = move * boxSize;
-
-    if(currentMove >= min && currentMove < max) {
-        return true;
+function isMoveValid(nextMove, e) {
+    if(e.keyCode == 37 || e.keyCode == 39) { // LEFT || RIGHT
+        // console.log(`Current/Next Column: ${nextMove} | Current/Next Element Type: ${map[characterCords.y][nextMove]}`);
+        // map[row][column]
+        if(map[characterCords.y][nextMove] !== 1) {
+            return true;
+        }
+        return false;
+    } else if (e.keyCode == 38 || e.keyCode == 40) { // UP // DOWN
+        // console.log(`Current/Next Row: ${nextMove} | Current/Next Element Type: ${map[nextMove][characterCords.x]}`);
+        // map[row][column]
+        if(map[nextMove][characterCords.x] !== 1) {
+            return true;
+        }
+        return false;
     }
-
-    return false;
 }
 
 function move(e) {
     if(e.keyCode == 37) { // LEFT
-        let move = characterCords.x - 1;
+        let nextMove = characterCords.x - 1;
+        character.style.transform = 'scale(-1, 1)';
         
-        if(isMoveValid(move)) {
-            character.style.transform = 'scale(-1, 1)';
-            characterCords.x = characterCords.x - 1;
+        if(isMoveValid(nextMove, e)) {
+            characterCords.x--;
         }
     }
     else if(e.keyCode == 38) { // TOP;
-        let move = characterCords.y - 1;
+        let nextMove = characterCords.y - 1;
+        character.style.transform = 'rotate(270deg)';
 
-        if(isMoveValid(move)) {
-            character.style.transform = 'rotate(270deg)';
-            characterCords.y = characterCords.y - 1;
+        if(isMoveValid(nextMove, e)) {
+            characterCords.y--;
         }
     }
     else if (e.keyCode == 39) { // RIGHT
-        let move = characterCords.x + 1;
+        let nextMove = characterCords.x + 1;
+        character.style.transform = '';
 
-        if(isMoveValid(move)) {
-            character.style.transform = '';
-            characterCords.x = characterCords.x + 1;
+        if(isMoveValid(nextMove, e)) {
+            characterCords.x++;
         } 		
     }
     else if (e.keyCode == 40) { // DOWN
-        let move = characterCords.y + 1;
+        let nextMove = characterCords.y + 1;
+        character.style.transform = 'rotate(90deg)';
 
-        if(isMoveValid(move)) {
-            character.style.transform = 'rotate(90deg)';
-            characterCords.y = characterCords.y + 1;
+        if(isMoveValid(nextMove, e)) {
+            characterCords.y++;
         }
     }
 
