@@ -30,6 +30,8 @@ let centerBlock = Math.floor(mapSize / 2);
 let score = 0;
 let map = [];
 
+let ninjamanHasMove = true;
+
 const mapGuide = {
     0: 'blank',
     1: 'wall',
@@ -215,25 +217,38 @@ function spawnGhost(ghost) {
 
 // Cords ✔
 function isMoveValid(nextMove, e) {
-    // LEFT || RIGHT
-    if(e.keyCode == 37 || e.keyCode == 39) {
-        if(map[ninjamanCords.x][nextMove] !== 1) {
-            return true;
+    if(ninjamanHasMove) {
+        // LEFT || RIGHT
+        if(e.keyCode == 37 || e.keyCode == 39) {
+            if(map[ninjamanCords.x][nextMove] !== 1) {
+                return true;
+            }
+            return false;
+        } 
+        // UP || DOWN
+        else if (e.keyCode == 38 || e.keyCode == 40) {
+            if(map[nextMove][ninjamanCords.y] !== 1) {
+                return true;
+            }
+            return false;
         }
-        return false;
-    } 
-    // UP || DOWN
-    else if (e.keyCode == 38 || e.keyCode == 40) {
-        if(map[nextMove][ninjamanCords.y] !== 1) {
-            return true;
-        }
-        return false;
+    }
+}
+
+function isMapBlank() {
+    let onigiri = Array.from(document.querySelectorAll('.onigiri'));
+    let sushi = Array.from(document.querySelectorAll('.sushi'));
+
+    if(onigiri.length + sushi.length === 1) {
+        console.log('WIN');
+        ninjamanHasMove = false;
     }
 }
 
 // Cords ✔
 function eat(nextMove, e) {
     let data = {};
+    isMapBlank();
 
     if(e.keyCode == 37 || e.keyCode == 39) {
         data.element = map[ninjamanCords.x][nextMove];
@@ -304,7 +319,6 @@ function moveNinjaman(e) {
 
     drawMap();
     spawnCharacter();
-    console.log(ninjamanCords);
 }
 
 function start() {
