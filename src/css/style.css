@@ -29,6 +29,10 @@
     position: absolute;
 }
 
+#ninjaman, .ghost {
+    background-size: contain;
+}
+
 #bluey {
     background-image: url("../img/bluey.gif");
 }
@@ -83,7 +87,6 @@
 
 .sushi, .onigiri, .ghost, #ninjaman {
     background-repeat: no-repeat;
-    background-size: contain;
 }
 
 .blank, .sushi, .onigiri, #ninjaman {

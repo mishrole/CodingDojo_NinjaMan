@@ -84,8 +84,8 @@ function randomRow(min, max) {
             let currentColumnElement;
             
             // If: Previous Block are Sushi or Onigiri, or Next Block is a wall  -> Current Block Blank
-            if(row[column - 1] === 2 || row[column - 1] === 3 || row[column + 1] == 1) {
-                currentColumnElement = 0;
+            if(row[column - 1] === 2 || row[column + 1] == 1) {
+                currentColumnElement = 3;
             } else {
                 currentColumnElement = randomNumber(min, max);
             }
@@ -105,14 +105,14 @@ function mapGenerator() {
             // First and Last Row : Wall
             temporalMap.push(randomRow(1, 1));
         } else {
-            temporalMap.push(randomRow(0, 3));
+            temporalMap.push(randomRow(1, 3));
         }
     }
 
     // Clear Ninjaman Start Position
     temporalMap[1][1] = 0;
-    temporalMap[1][2] = 0;
-    temporalMap[2][1] = 0;
+    temporalMap[1][2] = 3;
+    temporalMap[2][1] = 3;
 
     map = temporalMap;
 }
@@ -144,49 +144,49 @@ function spawnCharacter() {
 
 function drawGhostHouse() {
     // Top-top
-    map[centerBlock - 2][centerBlock - 3] = 0;
-    map[centerBlock - 2][centerBlock - 2] = 0;
-    map[centerBlock - 2][centerBlock - 1] = 0;
-    map[centerBlock - 2][centerBlock] = 0;
-    map[centerBlock - 2][centerBlock + 1] = 0;
-    map[centerBlock - 2][centerBlock + 2] = 0;
-    map[centerBlock - 2][centerBlock + 3] = 0;
+    map[centerBlock - 2][centerBlock - 3] = 3;
+    map[centerBlock - 2][centerBlock - 2] = 3;
+    map[centerBlock - 2][centerBlock - 1] = 3;
+    map[centerBlock - 2][centerBlock] = 3;
+    map[centerBlock - 2][centerBlock + 1] = 3;
+    map[centerBlock - 2][centerBlock + 2] = 3;
+    map[centerBlock - 2][centerBlock + 3] = 3;
 
     // Top
-    map[centerBlock - 1][centerBlock - 3] = 0;
+    map[centerBlock - 1][centerBlock - 3] = 3;
     map[centerBlock - 1][centerBlock - 2] = 1;
     map[centerBlock - 1][centerBlock - 1] = 1;
     map[centerBlock - 1][centerBlock] = 4;
     map[centerBlock - 1][centerBlock + 1] = 1;
     map[centerBlock - 1][centerBlock + 2] = 1;
-    map[centerBlock - 1][centerBlock + 3] = 0;
+    map[centerBlock - 1][centerBlock + 3] = 3;
     
     // centerBlock
-    map[centerBlock][centerBlock - 3] = 0;
+    map[centerBlock][centerBlock - 3] = 3;
     map[centerBlock][centerBlock - 2] = 1;
     map[centerBlock][centerBlock - 1] = 4;
     map[centerBlock][centerBlock] = 4;
     map[centerBlock][centerBlock + 1] = 4;
     map[centerBlock][centerBlock + 2] = 1;
-    map[centerBlock][centerBlock + 3] = 0;
+    map[centerBlock][centerBlock + 3] = 3;
 
     // Bottom
-    map[centerBlock + 1][centerBlock - 3] = 0;
+    map[centerBlock + 1][centerBlock - 3] = 3;
     map[centerBlock + 1][centerBlock - 2] = 1;
     map[centerBlock + 1][centerBlock - 1] = 1;
     map[centerBlock + 1][centerBlock] = 1;
     map[centerBlock + 1][centerBlock + 1] = 1;
     map[centerBlock + 1][centerBlock + 2] = 1;
-    map[centerBlock + 1][centerBlock + 3] = 0;
+    map[centerBlock + 1][centerBlock + 3] = 3;
 
     // Bottom-Bottom
-    map[centerBlock + 2][centerBlock - 3] = 0;
-    map[centerBlock + 2][centerBlock - 2] = 0;
-    map[centerBlock + 2][centerBlock - 1] = 0;
-    map[centerBlock + 2][centerBlock] = 0;
-    map[centerBlock + 2][centerBlock + 1] = 0;
-    map[centerBlock + 2][centerBlock + 2] = 0;
-    map[centerBlock + 2][centerBlock + 3] = 0;
+    map[centerBlock + 2][centerBlock - 3] = 3;
+    map[centerBlock + 2][centerBlock - 2] = 3;
+    map[centerBlock + 2][centerBlock - 1] = 3;
+    map[centerBlock + 2][centerBlock] = 3;
+    map[centerBlock + 2][centerBlock + 1] = 3;
+    map[centerBlock + 2][centerBlock + 2] = 3;
+    map[centerBlock + 2][centerBlock + 3] = 3;
 }
 
 function setGhostCords(ghost, index) {
