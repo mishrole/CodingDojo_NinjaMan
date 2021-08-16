@@ -10,7 +10,7 @@ const pumpky = document.getElementById('pumpky');
 const red = document.getElementById('red');
 
 const boxSize = 40;
-const mapSize = 15;
+const mapSize = 17;
 
 // Center Refresh Map Button
 document.getElementById('options').style.width = `${mapSize * boxSize}px`;
@@ -22,7 +22,8 @@ const mapGuide = {
     0: 'blank',
     1: 'wall',
     2: 'sushi',
-    3: 'onigiri'
+    3: 'onigiri',
+    4: 'test'
 }
 
 let ninjamanCords = {
@@ -61,11 +62,13 @@ function randomColumn(min, max) {
         if(i === 0 || i === mapSize - 1) {
             column.push(1);
         } else {
-            // If: Previous Block are Sushi or Onigiri -> Current Block Blank
-            if(column[i-1] === 2 || column[i-1] === 3) {
+            // If: Previous Block are Sushi or Onigiri, or Next Block is a wall  -> Current Block Blank
+            if(column[i-1] === 2 || column[i-1] === 3 || column[i+1] == 1) {
                 column.push(0);
             } else {
-                column.push(randomNumber(min, max));
+
+                let current = randomNumber(min, max);
+                column.push(current);
             }
         }
     }
@@ -86,6 +89,8 @@ function mapGenerator() {
 
     // Clear Ninjaman Start Position
     row[1][1] = 0;
+    row[1][2] = 0;
+    row[2][1] = 0;
 
     map = row;
 }
@@ -114,68 +119,71 @@ function spawnCharacter() {
     ninjaman.style.left = `${ninjamanCords.x * boxSize}px`;
 }
 
-function setGhostCords(ghost) {
-    let cordY = 0;
-    do {
-        // let randomRow = randomNumber(1, mapSize - 2);
-        let randomColumn = randomNumber(1, mapSize - 2);
+function drawGhostHouse() {
+    // let status = true;
+    // do {
+    //     let randomColumn = randomNumber(1, mapSize - 2);
 
-        for(let row = mapSize - 2; row >= 1; row--) {
-            if(map[row][randomColumn] === 0) {
+    //     for(let row = mapSize - 2; row >= 1; row--) {
+    //         if(map[row][randomColumn] === 0) {
+    //             ghostsCords[ghost].y = row;
+    //             ghostsCords[ghost].x = randomColumn;
+    //             status = false;
+    //             break;
+    //         }
+    //     }
+    // } while (status);
 
-                // for(let cord in ghostsCords) {
-                //     if(ghostsCords[cord].x !== row && ghostsCords[cord].y !== randomColumn) {
+    let center = Math.floor(mapSize / 2);
 
-                //         console.log(ghostsCords)
-                        
-                //     }
-                // }
-                ghostsCords[ghost].y = row;
-                ghostsCords[ghost].x = randomColumn;
-                cordY = 2;
-                break;
-                
-                // console.log(map[row]);
-                // console.log(`Row ${row} | Column ${randomColumn}`)
-                
-            }
-        }
+    // Top-top
+    map[center - 2][center - 3] = 0;
+    map[center - 2][center - 2] = 0;
+    map[center - 2][center - 1] = 0;
+    map[center - 2][center] = 0;
+    map[center - 2][center + 1] = 0;
+    map[center - 2][center + 2] = 0;
+    map[center - 2][center + 3] = 0;
 
-            // for(let row = mapSize - 1; row >= 1; row--) {
-            //     random = randomNumber(0, mapSize);
-            //     if(map[row][random] === 0) {
-            //         cordX = row;
-            //         cordY = random;
-            //         break;
-            //     }
-            // }
-
-        // if(map[randomRow][randomColumn] === 0) {
-        //     console.log([randomRow, randomColumn]);
-        //     ghostsCords[ghost].y = randomRow;
-        //     ghostsCords[ghost].x = randomColumn;
-        //     cordY = 2;
-        // }
-
-                    // console.log([randomRow, randomColumn]);
-            // cordX = randomRow;
-            // cordY = randomColumn;
-
-    } while (cordY < 1);
-
-    console.log(map)
-
-    // ghostsCords[ghost].y = cordY;
-    // ghostsCords[ghost].x = cordX;
-
-    // console.log(ghostsCords);
-    // console.log(map[cordX][cordY])
+    // Top
+    map[center - 1][center - 3] = 0;
+    map[center - 1][center - 2] = 1;
+    map[center - 1][center - 1] = 1;
+    map[center - 1][center] = 4;
+    map[center - 1][center + 1] = 1;
+    map[center - 1][center + 2] = 1;
+    map[center - 1][center + 3] = 0;
     
-    // return [cordX, cordY];
+    // Center
+    map[center][center - 3] = 0;
+    map[center][center - 2] = 1;
+    map[center][center - 1] = 4;
+    map[center][center] = 4;
+    map[center][center + 1] = 4;
+    map[center][center + 2] = 1;
+    map[center][center + 3] = 0;
+
+    // Bottom
+    map[center + 1][center - 3] = 0;
+    map[center + 1][center - 2] = 1;
+    map[center + 1][center - 1] = 1;
+    map[center + 1][center] = 1;
+    map[center + 1][center + 1] = 1;
+    map[center + 1][center + 2] = 1;
+    map[center + 1][center + 3] = 0;
+
+    // Bottom-Bottom
+    map[center + 2][center - 3] = 0;
+    map[center + 2][center - 2] = 0;
+    map[center + 2][center - 1] = 0;
+    map[center + 2][center] = 0;
+    map[center + 2][center + 1] = 0;
+    map[center + 2][center + 2] = 0;
+    map[center + 2][center + 3] = 0;
+
 }
 
 function spawnGhost(ghost) {
-    setGhostCords(ghost);
     document.getElementById(`${ghost}`).style.top = `${ghostsCords[ghost].y * boxSize}px`;
     document.getElementById(`${ghost}`).style.left = `${ghostsCords[ghost].x * boxSize}px`;
 }
@@ -284,6 +292,7 @@ function start() {
     }
 
     mapGenerator();
+    drawGhostHouse();
     drawMap();
     spawnCharacter();
 
