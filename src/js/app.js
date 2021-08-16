@@ -1,3 +1,12 @@
+/*
+Tu desafío será:
+(Básico) Llevar la cuenta de cuántos sushis se come NinjaMan. ✔
+(Básico) Añadir Onigiri como comida alternativa para NinjaMan. ✔
+(Intermedio) Que se genere un mundo al azar cuando se cargue la página. ✔ (Demasiado Azar)
+(Avanzado) Añadir Fantasmas que persigan a NinjaMan.
+(Avanzado) Darle 3 vidas a NinjaMan. Cuando un fantasma toque a NinjaMan 3 veces, aparezca Game Over
+*/
+
 const ninjaman = document.getElementById("ninjaman");
 const btnRefresh = document.getElementById("btnRefresh");
 const scoreContainer = document.getElementById("score");
@@ -36,73 +45,76 @@ let ninjamanCords = {
 
 let ghostsCords = {
     'bluey': {
-        x: 2,
-        y: 2
+        x: -1,
+        y: -1
     },
     'pinky': {
-        x: 3,
-        y: 3
+        x: -1,
+        y: -1
     },
     'pumpky': {
-        x: 4,
-        y: 4
+        x: -1,
+        y: -1
     },
     'red': {
-        x: 5,
-        y: 5
+        x: -1,
+        y: -1
     }
 }
 
 let ghostsHouseCords = [
-    [centerBlock, centerBlock - 1],
     [centerBlock - 1, centerBlock],
+    [centerBlock, centerBlock - 1],
     [centerBlock, centerBlock],
-    [centerBlock + 1, centerBlock]
+    [centerBlock, centerBlock + 1],
 ];
 
 function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function randomColumn(min, max) {
-    let column = [];
+function randomRow(min, max) {
+    let row = [];
 
-    for(let i = 0; i < mapSize; i++) {
+    for(let column = 0; column < mapSize; column++) {
         // First and Last Column : Wall
-        if(i === 0 || i === mapSize - 1) {
-            column.push(1);
+        if(column === 0 || column === mapSize - 1) {
+            row.push(1);
         } else {
+            let currentColumnElement;
+            
             // If: Previous Block are Sushi or Onigiri, or Next Block is a wall  -> Current Block Blank
-            if(column[i-1] === 2 || column[i-1] === 3 || column[i+1] == 1) {
-                column.push(0);
+            if(row[column - 1] === 2 || row[column - 1] === 3 || row[column + 1] == 1) {
+                currentColumnElement = 0;
             } else {
-
-                let current = randomNumber(min, max);
-                column.push(current);
+                currentColumnElement = randomNumber(min, max);
             }
+
+            row.push(currentColumnElement);
         }
     }
 
-    return column;
+    return row;
 }
 
 function mapGenerator() {
-    let row = [];
+    let temporalMap = [];
 
     for(let i = 0; i < mapSize; i++) {
         if(i === 0 || i === mapSize - 1) {
-            row.push(randomColumn(1,1));
+            // First and Last Row : Wall
+            temporalMap.push(randomRow(1, 1));
         } else {
-            row.push(randomColumn(0, 3));
+            temporalMap.push(randomRow(0, 3));
         }
     }
 
     // Clear Ninjaman Start Position
-    row[1][1] = 0;
-    row[1][2] = 0;
-    row[2][1] = 0;
+    temporalMap[1][1] = 0;
+    temporalMap[1][2] = 0;
+    temporalMap[2][1] = 0;
 
-    map = row;
+    map = temporalMap;
 }
 
 function drawMap() {
@@ -124,13 +136,13 @@ function drawMap() {
     }
 }
 
+// X = Rows -> Move Up & Down | Y = Columns -> Move Left & Right
 function spawnCharacter() {
-    ninjaman.style.top = `${ninjamanCords.y * boxSize}px`;
-    ninjaman.style.left = `${ninjamanCords.x * boxSize}px`;
+    ninjaman.style.top = `${ninjamanCords.x * boxSize}px`;
+    ninjaman.style.left = `${ninjamanCords.y * boxSize}px`;
 }
 
 function drawGhostHouse() {
-
     // Top-top
     map[centerBlock - 2][centerBlock - 3] = 0;
     map[centerBlock - 2][centerBlock - 2] = 0;
@@ -175,79 +187,59 @@ function drawGhostHouse() {
     map[centerBlock + 2][centerBlock + 1] = 0;
     map[centerBlock + 2][centerBlock + 2] = 0;
     map[centerBlock + 2][centerBlock + 3] = 0;
-
 }
 
 function setGhostCords(ghost, index) {
-
     ghostsCords[ghost].x = ghostsHouseCords[index][0];
     ghostsCords[ghost].y = ghostsHouseCords[index][1];
-    // ghostsCords[ghost].y = centerBlock;
-    // ghostsCords[ghost].x = centerBlock;
-
-    console.log(ghostsHouseCords)
-    // let status = true;
-    // do {
-    //     let randomColumn = randomNumber(1, mapSize - 2);
-
-    //     for(let row = mapSize - 2; row >= 1; row--) {
-    //         if(map[row][randomColumn] === 0) {
-    //             ghostsCords[ghost].y = row;
-    //             ghostsCords[ghost].x = randomColumn;
-    //             status = false;
-    //             break;
-    //         }
-    //     }
-    // } while (status);
-
-    
 }
 
 function spawnGhost(ghost) {
-    document.getElementById(`${ghost}`).style.top = `${ghostsCords[ghost].y * boxSize}px`;
-    document.getElementById(`${ghost}`).style.left = `${ghostsCords[ghost].x * boxSize}px`;
+    document.getElementById(`${ghost}`).style.top = `${ghostsCords[ghost].x * boxSize}px`;
+    document.getElementById(`${ghost}`).style.left = `${ghostsCords[ghost].y * boxSize}px`;
 }
 
+// Cords ✔
 function isMoveValid(nextMove, e) {
     // LEFT || RIGHT
     if(e.keyCode == 37 || e.keyCode == 39) {
-        if(map[ninjamanCords.y][nextMove] !== 1) {
+        if(map[ninjamanCords.x][nextMove] !== 1) {
             return true;
         }
         return false;
     } 
     // UP || DOWN
     else if (e.keyCode == 38 || e.keyCode == 40) {
-        if(map[nextMove][ninjamanCords.x] !== 1) {
+        if(map[nextMove][ninjamanCords.y] !== 1) {
             return true;
         }
         return false;
     }
 }
 
+// Cords ✔
 function eat(nextMove, e) {
-
-    let data = {}
+    let data = {};
 
     if(e.keyCode == 37 || e.keyCode == 39) {
-        data.element = map[ninjamanCords.y][nextMove];
+        data.element = map[ninjamanCords.x][nextMove];
         data.direction = 'horizontal';
     } else if(e.keyCode == 38 || e.keyCode == 40) {
-        data.element = map[nextMove][ninjamanCords.x];
+        data.element = map[nextMove][ninjamanCords.y];
         data.direction = 'vertical';
     }
 
     if(Object.keys(data).length > 0) {
         if(data.element === 2) {
-            score+=10;
+            score += 10;
         } else if (data.element === 3) {
-            score+=5;
+            score += 5;
         }
     
         if(data.direction === 'vertical') {
-            map[nextMove][ninjamanCords.x] = 0;
+            map[nextMove][ninjamanCords.y] = 0;
         } else if(data.direction === 'horizontal') {
-            map[ninjamanCords.y][nextMove] = 0;
+            map[ninjamanCords.x][nextMove] = 0;
         }
     }
 
@@ -255,49 +247,50 @@ function eat(nextMove, e) {
 }
 
 function move(e) {
-    // LEFT
+    // LEFT : Move between Columns
     if(e.keyCode == 37) {
-        let nextMove = ninjamanCords.x - 1;
+        let nextMove = ninjamanCords.y - 1;
         ninjaman.style.transform = 'scale(-1, 1)';
         
-        if(isMoveValid(nextMove, e)) {
-            ninjamanCords.x--;
-            eat(nextMove, e);
-        }
-    }
-    // TOP
-    else if(e.keyCode == 38) {
-        let nextMove = ninjamanCords.y - 1;
-        ninjaman.style.transform = 'rotate(270deg)';
-
         if(isMoveValid(nextMove, e)) {
             ninjamanCords.y--;
             eat(nextMove, e);
         }
     }
-    // RIGHT
+    // TOP : Move between Rows
+    else if(e.keyCode == 38) {
+        let nextMove = ninjamanCords.x - 1;
+        ninjaman.style.transform = 'rotate(270deg)';
+
+        if(isMoveValid(nextMove, e)) {
+            ninjamanCords.x--;
+            eat(nextMove, e);
+        }
+    }
+    // RIGHT : Move between Columns
     else if (e.keyCode == 39) {
-        let nextMove = ninjamanCords.x + 1;
+        let nextMove = ninjamanCords.y + 1;
         ninjaman.style.transform = '';
 
         if(isMoveValid(nextMove, e)) {
-            ninjamanCords.x++;
+            ninjamanCords.y++;
             eat(nextMove, e);
         } 		
     }
-    // DOWN
+    // DOWN : Move between Rows
     else if (e.keyCode == 40) {
-        let nextMove = ninjamanCords.y + 1;
+        let nextMove = ninjamanCords.x + 1;
         ninjaman.style.transform = 'rotate(90deg)';
 
         if(isMoveValid(nextMove, e)) {
-            ninjamanCords.y++;
+            ninjamanCords.x++;
             eat(nextMove, e);
         }
     }
 
     drawMap();
     spawnCharacter();
+    console.log(ninjamanCords);
 }
 
 function start() {
@@ -320,15 +313,9 @@ function start() {
     ninjaman.style.transform = '';
 
     Object.keys(ghostsCords).forEach((key, index) => {
-        // console.log(ghostsCords[key]);
-        // console.log(index);
         setGhostCords(key, index);
         spawnGhost(key);
     });
-
-    // for(let ghost in ghostsCords) {
-    //     spawnGhost(ghost);
-    // }
 }
 
 start();
