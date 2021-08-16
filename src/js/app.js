@@ -75,6 +75,7 @@ function randomNumber(min, max) {
 
 function randomRow(min, max) {
     let row = [];
+    let sushiCounter = 0;
 
     for(let column = 0; column < mapSize; column++) {
         // First and Last Column : Wall
@@ -83,11 +84,24 @@ function randomRow(min, max) {
         } else {
             let currentColumnElement;
             
-            // If: Previous Block are Sushi or Onigiri, or Next Block is a wall  -> Current Block Blank
-            if(row[column - 1] === 2 || row[column + 1] == 1) {
+            // If: Previous/Next Block is Sushi or Onigiri -> Current Block Onigiri
+            if(row[column + 1] === 2 || row[column + 1] === 3) {
                 currentColumnElement = 3;
             } else {
                 currentColumnElement = randomNumber(min, max);
+
+                if(currentColumnElement === 1) {
+                    row[column - 1] === 3;
+                    row[column + 1] === 3; 
+                }
+                
+                if(currentColumnElement === 2) {
+                    if(sushiCounter < mapSize / 4) {
+                        sushiCounter++;
+                    } else {
+                        currentColumnElement = 3;
+                    }
+                }
             }
 
             row.push(currentColumnElement);
@@ -105,7 +119,7 @@ function mapGenerator() {
             // First and Last Row : Wall
             temporalMap.push(randomRow(1, 1));
         } else {
-            temporalMap.push(randomRow(1, 3));
+            temporalMap.push(randomRow(2, 3));
         }
     }
 
@@ -127,7 +141,7 @@ function drawMap() {
         for(let j = 0; j < map[i].length; j++) {
             let elementContainer = document.createElement('div');
             let currentElement = map[i][j];
-            
+
             elementContainer.className = mapGuide[currentElement];
             rowContainer.append(elementContainer);
         }
@@ -246,7 +260,7 @@ function eat(nextMove, e) {
     scoreContainer.querySelector('span').innerHTML = score;
 }
 
-function move(e) {
+function moveNinjaman(e) {
     // LEFT : Move between Columns
     if(e.keyCode == 37) {
         let nextMove = ninjamanCords.y - 1;
@@ -321,7 +335,7 @@ function start() {
 start();
 
 document.onkeydown = function(e) {
-    move(e);
+    moveNinjaman(e);
 }
 
 btnRefresh.addEventListener('click', function() {
