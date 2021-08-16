@@ -15,6 +15,9 @@ const mapSize = 17;
 // Center Refresh Map Button
 document.getElementById('options').style.width = `${mapSize * boxSize}px`;
 
+// MapCenter
+let centerBlock = Math.floor(mapSize / 2);
+
 let score = 0;
 let map = [];
 
@@ -49,6 +52,13 @@ let ghostsCords = {
         y: 5
     }
 }
+
+let ghostsHouseCords = [
+    [centerBlock, centerBlock - 1],
+    [centerBlock - 1, centerBlock],
+    [centerBlock, centerBlock],
+    [centerBlock + 1, centerBlock]
+];
 
 function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -120,6 +130,62 @@ function spawnCharacter() {
 }
 
 function drawGhostHouse() {
+
+    // Top-top
+    map[centerBlock - 2][centerBlock - 3] = 0;
+    map[centerBlock - 2][centerBlock - 2] = 0;
+    map[centerBlock - 2][centerBlock - 1] = 0;
+    map[centerBlock - 2][centerBlock] = 0;
+    map[centerBlock - 2][centerBlock + 1] = 0;
+    map[centerBlock - 2][centerBlock + 2] = 0;
+    map[centerBlock - 2][centerBlock + 3] = 0;
+
+    // Top
+    map[centerBlock - 1][centerBlock - 3] = 0;
+    map[centerBlock - 1][centerBlock - 2] = 1;
+    map[centerBlock - 1][centerBlock - 1] = 1;
+    map[centerBlock - 1][centerBlock] = 4;
+    map[centerBlock - 1][centerBlock + 1] = 1;
+    map[centerBlock - 1][centerBlock + 2] = 1;
+    map[centerBlock - 1][centerBlock + 3] = 0;
+    
+    // centerBlock
+    map[centerBlock][centerBlock - 3] = 0;
+    map[centerBlock][centerBlock - 2] = 1;
+    map[centerBlock][centerBlock - 1] = 4;
+    map[centerBlock][centerBlock] = 4;
+    map[centerBlock][centerBlock + 1] = 4;
+    map[centerBlock][centerBlock + 2] = 1;
+    map[centerBlock][centerBlock + 3] = 0;
+
+    // Bottom
+    map[centerBlock + 1][centerBlock - 3] = 0;
+    map[centerBlock + 1][centerBlock - 2] = 1;
+    map[centerBlock + 1][centerBlock - 1] = 1;
+    map[centerBlock + 1][centerBlock] = 1;
+    map[centerBlock + 1][centerBlock + 1] = 1;
+    map[centerBlock + 1][centerBlock + 2] = 1;
+    map[centerBlock + 1][centerBlock + 3] = 0;
+
+    // Bottom-Bottom
+    map[centerBlock + 2][centerBlock - 3] = 0;
+    map[centerBlock + 2][centerBlock - 2] = 0;
+    map[centerBlock + 2][centerBlock - 1] = 0;
+    map[centerBlock + 2][centerBlock] = 0;
+    map[centerBlock + 2][centerBlock + 1] = 0;
+    map[centerBlock + 2][centerBlock + 2] = 0;
+    map[centerBlock + 2][centerBlock + 3] = 0;
+
+}
+
+function setGhostCords(ghost, index) {
+
+    ghostsCords[ghost].x = ghostsHouseCords[index][0];
+    ghostsCords[ghost].y = ghostsHouseCords[index][1];
+    // ghostsCords[ghost].y = centerBlock;
+    // ghostsCords[ghost].x = centerBlock;
+
+    console.log(ghostsHouseCords)
     // let status = true;
     // do {
     //     let randomColumn = randomNumber(1, mapSize - 2);
@@ -134,53 +200,7 @@ function drawGhostHouse() {
     //     }
     // } while (status);
 
-    let center = Math.floor(mapSize / 2);
-
-    // Top-top
-    map[center - 2][center - 3] = 0;
-    map[center - 2][center - 2] = 0;
-    map[center - 2][center - 1] = 0;
-    map[center - 2][center] = 0;
-    map[center - 2][center + 1] = 0;
-    map[center - 2][center + 2] = 0;
-    map[center - 2][center + 3] = 0;
-
-    // Top
-    map[center - 1][center - 3] = 0;
-    map[center - 1][center - 2] = 1;
-    map[center - 1][center - 1] = 1;
-    map[center - 1][center] = 4;
-    map[center - 1][center + 1] = 1;
-    map[center - 1][center + 2] = 1;
-    map[center - 1][center + 3] = 0;
     
-    // Center
-    map[center][center - 3] = 0;
-    map[center][center - 2] = 1;
-    map[center][center - 1] = 4;
-    map[center][center] = 4;
-    map[center][center + 1] = 4;
-    map[center][center + 2] = 1;
-    map[center][center + 3] = 0;
-
-    // Bottom
-    map[center + 1][center - 3] = 0;
-    map[center + 1][center - 2] = 1;
-    map[center + 1][center - 1] = 1;
-    map[center + 1][center] = 1;
-    map[center + 1][center + 1] = 1;
-    map[center + 1][center + 2] = 1;
-    map[center + 1][center + 3] = 0;
-
-    // Bottom-Bottom
-    map[center + 2][center - 3] = 0;
-    map[center + 2][center - 2] = 0;
-    map[center + 2][center - 1] = 0;
-    map[center + 2][center] = 0;
-    map[center + 2][center + 1] = 0;
-    map[center + 2][center + 2] = 0;
-    map[center + 2][center + 3] = 0;
-
 }
 
 function spawnGhost(ghost) {
@@ -299,9 +319,16 @@ function start() {
     // Reset Ninja Direction
     ninjaman.style.transform = '';
 
-    for(let ghost in ghostsCords) {
-        spawnGhost(ghost);
-    }
+    Object.keys(ghostsCords).forEach((key, index) => {
+        // console.log(ghostsCords[key]);
+        // console.log(index);
+        setGhostCords(key, index);
+        spawnGhost(key);
+    });
+
+    // for(let ghost in ghostsCords) {
+    //     spawnGhost(ghost);
+    // }
 }
 
 start();

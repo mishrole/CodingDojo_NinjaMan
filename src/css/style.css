@@ -27,7 +27,6 @@
 
 .ghost {
     position: absolute;
-    opacity: 0.4;
 }
 
 #bluey {
@@ -87,7 +86,7 @@
     background-size: contain;
 }
 
-.blank, .sushi, .onigiri, .ghost, #ninjaman {
+.blank, .sushi, .onigiri, #ninjaman {
     background-color: black;
 }
 
@@ -99,5 +98,6 @@
 .test {
     height: 40px;
     width: 40px;
-    background-color: red;
+    background-color: black;
+    opacity: 0.8;
 }
