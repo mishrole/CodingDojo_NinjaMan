@@ -67,21 +67,9 @@ const wallModelGuide = {
 
         let x = param[0];
         let y = param[1];
-        // let x = 3;
-        // let y = 1;
 
         for(let i = 1; i <= 5; i++) {
-            // map[x][y + i] = 4;
-            // map[x + 1][y + i] = 4;
-            // map[x + 2][y + i] = 4;
-            // map[x + 3][y + i] = 4;
-            // map[x + 4][y + i] = 4;
-
-            // if(i < 4) {
-                
-            // }
             map[x][y + i] = 3;
-            // map[x + 1][y + i] = 4;
             map[x + 2][y + i] = 3;
             map[x + 3][y + i] = 3;
             map[x + 4][y + i] = 3;
@@ -99,24 +87,6 @@ const wallModelGuide = {
                 map[x + 1][y + i] = 3;
             }
 
-            // map[x + 1][y + 2] = 1;
-            // map[x + 1][y + 3] = 1;
-            // map[x + 1][y + 4] = 1;
-
-            // if(i >  && i <= 4) {
-                
-            //     console.log(`${x + 1} | ${y + i}`)
-            // }
-
-            // if(i === 2) {
-            //     map[x + 1][y + i] = 0;
-            //     map[x + 3][y + i] = 0;
-            // }
-
-            // if(i === 2) {
-                
-            // }
-
         }
     },
     model2: function(param) {
@@ -130,7 +100,7 @@ const wallModelGuide = {
 function drawRandomWalls(walls) {
     for(let i = 0; i < walls; i++) {
         // let randomModel = randomNumber(0, Object.keys(wallModelGuide).length - 1);
-        let randomModel = randomNumber(1, 1);
+        let randomModel = randomNumber(0, 1);
         let randomCords = [randomNumber(1, (mapSize / 2) + 1), randomNumber(1, (mapSize / 2) + 1)];
 
         switch (randomModel) {
@@ -446,8 +416,8 @@ function start() {
     }
 
     mapGenerator();
-    drawRandomWalls(1);
-    // drawGhostsHouse();
+    drawRandomWalls(parseFloat(mapSize / 2));
+    drawGhostsHouse();
     drawMap(); // Final Map
     spawnCharacter();
 
