@@ -40,6 +40,90 @@ const mapGuide = {
     4: 'test'
 }
 
+const wallModelGuide = {
+    model0: function(param) {
+        // Modelo T
+        for(let i = 1; i <= 5; i++) {
+
+            map[param[0]][param[1] + i] = 3;
+            map[param[0] + 1][param[1] + i] = 3;
+            map[param[0] + 2][param[1] + i] = 3;
+            map[param[0] + 3][param[1] + i] = 3;
+            map[param[0] + 4][param[1] + i] = 3;
+
+            if(i >= 2 && i <= 4) {
+                map[param[0] + 1][param[1] + i] = 1;
+            }
+
+            if(i === 3) {
+                map[param[0] + 2][param[1] + i] = 1;
+                map[param[0] + 3][param[1] + i] = 1;
+            }
+
+            // if(i === 2) {
+            //     map[param[0] + 3][param[1] + i] = 4;
+            // }
+
+            // if(i === 4) {
+            //     map[param[0] + 3][param[1] + i] = 4;
+            // }
+
+
+            // if(i >= 2 && i <= 4) {
+            //     map[param[0] + 1][param[1] + i] = 1;
+
+            //     if(i === 3) {
+            //         map[param[0] + 2][param[1] + i] = 1;
+            //         map[param[0] + 3][param[1] + i] = 1;
+            //     }
+
+            // } else {
+
+            //     if(i === 1) {
+            //         map[param[0] + 2][param[1] + i] = 4;
+            //         map[param[0] + 3][param[1] + i] = 4;
+            //         map[param[0] + 4][param[1] + i] = 4;
+            //     }
+
+            //     map[param[0] + 1][param[1] + i] = 4;
+            // }
+            
+        }
+    },
+    model1: function(param) {
+        console.log(`Modelo ${param}`)
+    },
+    model2: function(param) {
+        console.log(`Modelo ${param}`)
+    },
+    model3: function(param) {
+        console.log(`Modelo ${param}`)
+    }
+}
+
+function drawRandomWalls(walls) {
+    for(let i = 0; i < walls; i++) {
+        // let randomModel = randomNumber(0, Object.keys(wallModelGuide).length - 1);
+        let randomModel = randomNumber(0, 0);
+        let randomCords = [randomNumber(1, mapSize / 2), randomNumber(1, mapSize / 2)];
+
+        switch (randomModel) {
+            case 0:
+                wallModelGuide.model0(randomCords);
+                break;
+            case 1:
+                wallModelGuide.model1(randomModel);
+                break;
+            case 2:
+                wallModelGuide.model2(randomModel);
+                break;
+            default:
+                wallModelGuide.model3(randomModel);
+                break;
+        }
+    }
+}
+
 let ninjamanCords = {
     x: 1,
     y: 1
@@ -63,6 +147,8 @@ let ghostsCords = {
         y: -1
     }
 }
+
+// Static
 
 let ghostsHouseCords = [
     [centerBlock - 1, centerBlock],
@@ -158,7 +244,8 @@ function spawnCharacter() {
     ninjaman.style.left = `${ninjamanCords.y * boxSize}px`;
 }
 
-function drawGhostHouse() {
+// To-Do: Refactor - Dynamic?
+function drawGhostsHouse() {
     // Top-top
     map[centerBlock - 2][centerBlock - 3] = 3;
     map[centerBlock - 2][centerBlock - 2] = 3;
@@ -177,7 +264,7 @@ function drawGhostHouse() {
     map[centerBlock - 1][centerBlock + 2] = 1;
     map[centerBlock - 1][centerBlock + 3] = 3;
     
-    // centerBlock
+    // Center
     map[centerBlock][centerBlock - 3] = 3;
     map[centerBlock][centerBlock - 2] = 1;
     map[centerBlock][centerBlock - 1] = 4;
@@ -333,8 +420,9 @@ function start() {
     }
 
     mapGenerator();
-    drawGhostHouse();
-    drawMap();
+    drawRandomWalls(4);
+    drawGhostsHouse();
+    drawMap(); // Final Map
     spawnCharacter();
 
     // Reset Ninja Direction
