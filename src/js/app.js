@@ -89,18 +89,44 @@ const wallModelGuide = {
 
         }
     },
-    model2: function(param) {
-        console.log(`Modelo ${param}`)
+    modelZ: function(param) {
+        
+        let x = param[0];
+        let y = param[1];
+
+        for(let i = 1; i <= 5; i++) {
+            map[x][y + i] = 3;
+            map[x + 2][y + i] = 3;
+            map[x + 3][y + i] = 3;
+            map[x + 4][y + i] = 3;
+
+            if(i >= 2 && i <= 4) {
+                map[x + 2][y + i] = 1;
+            } else {
+                map[x + 1][y + 2] = 1;
+                map[x + 3][y + 4] = 1;
+            }
+        }
     },
-    model3: function(param) {
-        console.log(`Modelo ${param}`)
+    modelI: function(param) {
+
+        let x = param[0];
+        let y = param[1];
+
+        for(let i = 1; i <= 3; i++) {
+            map[x][y + i] = 3;
+            map[x + 4][y + i] = 3;
+
+            if(i >= 1 && i <= 3) {
+                map[x + i][y + 2] = 1;
+            }
+        }
     }
 }
 
 function drawRandomWalls(walls) {
     for(let i = 0; i < walls; i++) {
-        // let randomModel = randomNumber(0, Object.keys(wallModelGuide).length - 1);
-        let randomModel = randomNumber(0, 1);
+        let randomModel = randomNumber(0, 3);
         let randomCords = [randomNumber(1, (mapSize / 2) + 1), randomNumber(1, (mapSize / 2) + 1)];
 
         switch (randomModel) {
@@ -111,10 +137,10 @@ function drawRandomWalls(walls) {
                 wallModelGuide.modelC(randomCords);
                 break;
             case 2:
-                wallModelGuide.model2(randomCords);
+                wallModelGuide.modelZ(randomCords);
                 break;
             default:
-                wallModelGuide.model3(randomCords);
+                wallModelGuide.modelI(randomCords);
                 break;
         }
     }
@@ -416,7 +442,8 @@ function start() {
     }
 
     mapGenerator();
-    drawRandomWalls(parseFloat(mapSize / 2));
+    // Too High = Enclosed items
+    drawRandomWalls(mapSize + parseFloat(mapSize / 2));
     drawGhostsHouse();
     drawMap(); // Final Map
     spawnCharacter();
