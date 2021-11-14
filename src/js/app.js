@@ -440,10 +440,24 @@ function isMoveValid(nextMove, e) {
     }
 }
 
+function isAutoMoveValid(nextMove, ghost, direction) {
+    if(direction === 37 || direction === 39) {
+        if(map[ghostsCords[ghost].x][nextMove] !== 1 && map[ghostsCords[ghost].x][nextMove] !== 4) {
+            return true;
+        }
+        return false;
+    } else if (direction === 38 || direction === 40) {
+        if(map[nextMove][ghostsCords[ghost].y] !== 1 && map[nextMove][ghostsCords[ghost].y] !== 4) {
+            return true;
+        }
+        return false;
+    }
+}
+
 function isMapBlank() {
     let onigiri = Array.from(document.querySelectorAll('.onigiri'));
     let sushi = Array.from(document.querySelectorAll('.sushi'));
-    console.log(onigiri.length, sushi.length);
+    //console.log(onigiri.length, sushi.length);
 
     if(onigiri.length + sushi.length === 0) { // onkeydown = +1 move
         isGameOver = true;
@@ -573,16 +587,209 @@ function start() {
     // Reset Ninja Direction
     ninjaman.style.transform = '';
 
+    // Set Ghosts coords
     Object.keys(ghostsCords).forEach((key, index) => {
         setGhostCords(key, index);
         spawnGhost(key);
     });
+
+    let ghostMoveInterval = setInterval(() => {
+        if(isGameOver) {
+            clearInterval(ghostMoveInterval);
+        }
+
+        /*
+        - ¿Cuál va a ser la dirección de su primer movimiento?
+        - ¿Cómo se va a elegir esa dirección?
+
+        1. Determinar a qué direcciones SÍ se puede ir
+            Probar en todas las direcciones y guardar las que no sean pared ni la casa
+        2. Determinar cuál es la dirección más cercana a ninjaman
+            Con las direcciones permitidas:
+                Determinar si mi posición es mayor o menor en [x, y] con respecto a ninjaman
+                    Si ghost.x > ninjaman.x entonces resto ghost.x - 1 y se mueve hacia arriba (row - 1)
+                    Si ghost.y > ninjaman.y entonces resto ghost.y - 1 y se mueve hacia la izquierda (column - 1)
+                    Si ghost.x < ninjaman.x entonces sumo ghost.x + 1 y se mueve hacia abajo (row + 1)
+                    Si ghost.y < ninjaman.y entonces sumo ghost.y + 1 y se mueve hacia la derecha (column + 1)
+                Determinar cuál de estas sumas o restas en [x, y] me da el resultado más cercano al ninjaman
+        3. Si tiene más de una dirección posible y la misma distancia, elegir con random
+        */
+
+        // ¿A dónde sí puede ir?
+
+        let nextMoveUp = ghostsCords['bluey'].x - 1 >= 1 ? ghostsCords['bluey'].x - 1 : ghostsCords['bluey'].x;
+        let nextMoveDown = ghostsCords['bluey'].x + 1 <= mapSize - 2 ? ghostsCords['bluey'].x + 1 : ghostsCords['bluey'].x;
+        let nextMoveLeft = ghostsCords['bluey'].y - 1 >= 1 ? ghostsCords['bluey'].y - 1 : ghostsCords['bluey'].y;
+        let nextMoveRight = ghostsCords['bluey'].y + 1 <= mapSize - 2 ? ghostsCords['bluey'].y + 1 :  ghostsCords['bluey'].y; 
+
+        let moves = {
+            up: {
+                isAvailable: false,
+                position: [],
+                minMovesToNinjaman: [],
+                isBestPosition: false
+            },
+            down: {
+                isAvailable: false,
+                position: [],
+                minMovesToNinjaman: [],
+                isBestPosition: false
+            },
+            left: {
+                isAvailable: false,
+                position: [],
+                minMovesToNinjaman: [],
+                isBestPosition: false
+            },
+            right: {
+                isAvailable: false,
+                position: [],
+                minMovesToNinjaman: [],
+                isBestPosition: false
+            },
+            upLeft: {
+                isAvailable: false,
+                position: [],
+                minMovesToNinjaman: [],
+                isBestPosition: false
+            },
+            upRight: {
+                isAvailable: false,
+                position: [],
+                minMovesToNinjaman: [],
+                isBestPosition: false
+            },
+            downLeft: {
+                isAvailable: false,
+                position: [],
+                minMovesToNinjaman: [],
+                isBestPosition: false
+            },
+            downRight: {
+                isAvailable: false,
+                position: [],
+                minMovesToNinjaman: [],
+                isBestPosition: false
+            },
+        }
+
+        // UP
+        if(map[nextMoveUp][ghostsCords['bluey'].y] !== 1 && map[nextMoveUp][ghostsCords['bluey'].y] !== 4) {
+            moves.up.isAvailable = true;
+            moves.up.position = [nextMoveUp, ghostsCords['bluey'].y];
+            moves.up.minMovesToNinjaman = [nextMoveUp - ninjamanCords.x, ghostsCords['bluey'].y - ninjamanCords.y];
+        } else {
+            moves.up.isAvailable = false;
+        }
+
+        // UP + RIGHT
+        if(map[nextMoveUp][nextMoveRight] !== 1 && map[nextMoveUp][nextMoveRight] !== 4) {
+            moves.upRight.isAvailable = true;
+            moves.upRight.position = [nextMoveUp,nextMoveRight];
+            moves.upRight.minMovesToNinjaman = [nextMoveUp - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
+        }
+
+        // UP + LEFT
+        if(map[nextMoveUp][nextMoveLeft] !== 1 && map[nextMoveUp][nextMoveLeft] !== 4) {
+            moves.upLeft.isAvailable = true;
+            moves.upLeft.position = [nextMoveUp, nextMoveLeft];
+            moves.upLeft.minMovesToNinjaman = [nextMoveUp - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
+        }
+
+        // DOWN
+        if(map[nextMoveDown][ghostsCords['bluey'].y] !== 1 && map[nextMoveDown][ghostsCords['bluey'].y] !== 4) {
+            moves.down.isAvailable = true;
+            moves.down.position = [nextMoveDown, ghostsCords['bluey'].y];
+            moves.down.minMovesToNinjaman = [nextMoveDown - ninjamanCords.x, ghostsCords['bluey'].y - ninjamanCords.y];
+        } else {
+            moves.down.isAvailable = false;
+        }
+
+        // DOWN + RIGHT
+        if(map[nextMoveDown][nextMoveRight] !== 1 && map[nextMoveDown][nextMoveRight] !== 4) {
+            moves.downRight.isAvailable = true;
+            moves.downRight.position = [nextMoveDown, nextMoveRight];
+            moves.downRight.minMovesToNinjaman = [nextMoveDown - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
+        }
+
+        // DOWN + LEFT
+        if(map[nextMoveDown][nextMoveLeft] !== 1 && map[nextMoveDown][nextMoveLeft] !== 4) {
+            moves.downLeft.isAvailable = true;
+            moves.downLeft.position = [nextMoveDown, nextMoveLeft];
+            moves.downLeft.minMovesToNinjaman = [nextMoveDown - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
+        }
+
+        // LEFT
+        if(map[ghostsCords['bluey'].x][nextMoveLeft] !== 1 && map[ghostsCords['bluey'].x][nextMoveLeft] !== 4) {
+            moves.left.isAvailable = true;
+            moves.left.position = [ghostsCords['bluey'].x, nextMoveLeft];
+            moves.left.minMovesToNinjaman = [ghostsCords['bluey'].x - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
+        } else {
+            moves.left.isAvailable = false;
+        }
+
+        // RIGHT
+        if(map[ghostsCords['bluey'].x][nextMoveRight] !== 1 && map[ghostsCords['bluey'].x][nextMoveRight] !== 4) {
+            moves.right.isAvailable = true;
+            moves.right.position = [ghostsCords['bluey'].x, nextMoveRight];
+            moves.right.minMovesToNinjaman = [ghostsCords['bluey'].x - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
+        } else {
+            moves.right.isAvailable = false;
+        }
+
+        const asArray = Object.entries(moves);
+        const filtered = Object.fromEntries(asArray.filter(([key, value]) => value.isAvailable));
+
+        let minMoves = {
+            minCoords: [],
+            name: ''
+        };
+
+        // Aquí debería filtrar solo 1 movimiento
+        if(Object.keys(filtered).length > 0) {
+            console.log(Object.keys(filtered).length);
+            Object.keys(filtered).forEach((key, index) => {
+                if(index == 0) {
+                    minMoves.minCoords = filtered[key].minMovesToNinjaman;
+                    minMoves.name = key;
+                } else {
+                    if(filtered[key].minMovesToNinjaman[0] <= minMoves.minCoords[0] &&
+                         filtered[key].minMovesToNinjaman[1] <= minMoves.minCoords[1]) {
+                        minMoves.minCoords = filtered[key].minMovesToNinjaman
+                        minMoves.name = key;
+                    }
+                }
+            });
+    
+        }
+
+        console.log('moves', moves);
+        console.log('filtered', filtered);
+        console.log('minMoves', minMoves);
+
+        // ghostsCords['bluey'].x = minMoves.minCoords[0];
+        // ghostsCords['bluey'].y = minMoves.minCoords[1];
+        ghostsCords['bluey'].x = filtered[minMoves.name].position[0]
+        ghostsCords['bluey'].y = filtered[minMoves.name].position[1];
+
+        if(ghostsCords['bluey'].x === ninjamanCords.x && ghostsCords['bluey'].y === ninjamanCords.y) {
+            isGameOver = true;
+        }
+
+        // TODO: Determinar la mejor dirección
+        // LA DIFERENCIA DE MINMOVES Y POSITION EN MOVES[] ME DA LAS COORDENADAS DE NINJAMAN
+        
+        spawnGhost('bluey'); // ¡Genial! ¡Se mueve!
+
+    }, 1000);
 }
 
 start();
 
 document.onkeydown = function(e) {
-    moveNinjaman(e);
+    if(!isGameOver) {
+        moveNinjaman(e);
+    }
 }
 
 btnRefresh.addEventListener('click', function() {
