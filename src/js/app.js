@@ -26,11 +26,9 @@ document.getElementById('options').style.width = `${mapSize * boxSize}px`;
 
 // MapCenter
 let centerBlock = Math.floor(mapSize / 2);
-
+let isGameOver = false;
 let score = 0;
 let map = [];
-
-let ninjamanHasMove = true;
 
 const mapGuide = {
     0: 'blank',
@@ -247,10 +245,7 @@ const mapModels = {
 //     }
 // }
 
-let ninjamanCords = {
-    x: 1,
-    y: 1
-}
+let ninjamanCords;
 
 let ghostsCords = {
     'bluey': {
@@ -427,7 +422,7 @@ function spawnGhost(ghost) {
 
 // Cords ✔
 function isMoveValid(nextMove, e) {
-    if(ninjamanHasMove) {
+    if(ninjamanCords.hasMove) {
         // LEFT || RIGHT
         if(e.keyCode == 37 || e.keyCode == 39) {
             if(map[ninjamanCords.x][nextMove] !== 1 && map[ninjamanCords.x][nextMove] !== 4) {
@@ -448,10 +443,12 @@ function isMoveValid(nextMove, e) {
 function isMapBlank() {
     let onigiri = Array.from(document.querySelectorAll('.onigiri'));
     let sushi = Array.from(document.querySelectorAll('.sushi'));
+    console.log(onigiri.length, sushi.length);
 
-    if(onigiri.length + sushi.length === 1) {
-        console.log('WIN');
-        ninjamanHasMove = false;
+    if(onigiri.length + sushi.length === 0) { // onkeydown = +1 move
+        isGameOver = true;
+        ninjamanCords.hasMove = false;
+        alert('WIN');
     }
 }
 
@@ -467,21 +464,19 @@ function eat(nextMove, e) {
         data.direction = 'vertical';
     }
 
-    if(Object.keys(data).length > 0) {
-        if(data.element === 2) {
-            score += 10;
-        } else if (data.element === 3) {
-            score += 5;
-        }
-    
+    if(Object.keys(data).length > 0) {    
         if(data.direction === 'vertical') {
             map[nextMove][ninjamanCords.y] = 0;
         } else if(data.direction === 'horizontal') {
             map[ninjamanCords.x][nextMove] = 0;
         }
-    }
 
-    isMapBlank();
+        if(data.element === 2) {
+            score += 10;
+        } else if (data.element === 3) {
+            score += 5;
+        }
+    }
 
     scoreContainer.querySelector('span').innerHTML = score;
 }
@@ -530,6 +525,9 @@ function moveNinjaman(e) {
 
     drawMap();
     spawnCharacter();
+    if(!isGameOver) {
+        isMapBlank();
+    }
 }
 
 function selectRandomMap() {
@@ -559,7 +557,9 @@ function start() {
     // Reset Ninjaman Position
     ninjamanCords = {
         x: 1,
-        y: 1
+        y: 1,
+        currentDirection: 39,
+        hasMove: true,
     }
 
     mapGenerator();
