@@ -35,9 +35,9 @@ let ninjamanHasMove = true;
 const mapGuide = {
     0: 'blank',
     1: 'wall',
-    2: 'sushi', // 20 points
+    2: 'sushi', // 10 points
     3: 'onigiri', // 5 points
-    4: 'test'
+    4: 'house'
 }
 
 const wallModelGuide = {
@@ -121,30 +121,131 @@ const wallModelGuide = {
                 map[x + i][y + 2] = 1;
             }
         }
-    }
-}
+    },
+    modelH: function(param) {
+        let x = param[0];
+        let y = param[1];
 
-function drawRandomWalls(walls) {
-    for(let i = 0; i < walls; i++) {
-        let randomModel = randomNumber(0, 3);
-        let randomCords = [randomNumber(1, (mapSize / 2) + 1), randomNumber(1, (mapSize / 2) + 1)];
+        for(let i = 1; i <= 5; i++) {
+            
+            map[i][y + 1] = 3;
+            map[x][y + i] = 3;
+            map[x + 4][y + i] = 3;
 
-        switch (randomModel) {
-            case 0:
-                wallModelGuide.modelT(randomCords);
-                break;
-            case 1:
-                wallModelGuide.modelC(randomCords);
-                break;
-            case 2:
-                wallModelGuide.modelZ(randomCords);
-                break;
-            default:
-                wallModelGuide.modelI(randomCords);
-                break;
+            if(i >= 1 && i <= 3) {
+                map[x + i][y + 2] = 1;
+                map[x + i][y + 4] = 1;
+
+                if(i === 3) {
+                    map[x + 1][y + i] = 3;
+                    map[x + 2][y + i] = 1;
+                    map[x + 3][y + i] = 3;
+                }
+            }
+
+            if(i === 5) {
+                map[x + 1][i] = 3;
+                map[x + 2][i] = 3;
+                map[x + 3][i] = 3;
+            }
         }
     }
 }
+
+const mapModels = {
+    model1: function() {
+        wallModelGuide.modelT([1,0]);
+        wallModelGuide.modelZ([5,0]);
+        wallModelGuide.modelC([9,0]);
+        wallModelGuide.modelH([11,0]);
+    
+        wallModelGuide.modelZ([1,4]);
+        wallModelGuide.modelT([4,3]);
+        wallModelGuide.modelT([4,6]);
+        wallModelGuide.modelT([10,4]);
+        wallModelGuide.modelZ([11,6]);
+
+        wallModelGuide.modelC([1,10]);
+        wallModelGuide.modelT([4,10]);
+        wallModelGuide.modelZ([6,10]);
+        wallModelGuide.modelI([9,10]);
+        wallModelGuide.modelH([11,10]);
+
+    },
+    model2: function() {
+        wallModelGuide.modelZ([1,0]);
+        wallModelGuide.modelC([5,0]);
+        wallModelGuide.modelT([10,0]);
+    
+        wallModelGuide.modelC([1,5]);
+        wallModelGuide.modelZ([10,5]);
+    
+        wallModelGuide.modelZ([1,10]);
+        wallModelGuide.modelC([5,10]);
+        wallModelGuide.modelT([10,10]);
+    },
+    model3: function() {
+        wallModelGuide.modelH([1,0]);
+        wallModelGuide.modelZ([5,0]);
+        wallModelGuide.modelT([9,0]);
+        wallModelGuide.modelI([11,0]);
+
+        wallModelGuide.modelZ([1,4]);
+        wallModelGuide.modelC([3,4]);
+        wallModelGuide.modelT([10,4]);
+        wallModelGuide.modelZ([11,6]);
+        wallModelGuide.modelI([11,3]);
+
+        wallModelGuide.modelZ([1,8]);
+        wallModelGuide.modelI([1,12]);
+        wallModelGuide.modelC([5,10]);
+        wallModelGuide.modelT([10,10]);
+    },
+    model4: function() {
+        wallModelGuide.modelZ([1,0]);
+        wallModelGuide.modelH([4,0]);
+        wallModelGuide.modelZ([6,0]);
+        wallModelGuide.modelT([9,0]);
+        wallModelGuide.modelZ([11,0]);
+
+        wallModelGuide.modelC([1,4]);
+        wallModelGuide.modelC([1,6]);
+
+        wallModelGuide.modelI([9,4]);
+        wallModelGuide.modelC([8,6]);
+        wallModelGuide.modelZ([10,8]);
+        wallModelGuide.modelZ([11,6]);
+
+        wallModelGuide.modelC([1,10]);
+        wallModelGuide.modelT([4,10]);
+        wallModelGuide.modelZ([6,10]);
+        wallModelGuide.modelI([9,10]);
+        wallModelGuide.modelH([11,10]);
+    }
+}
+
+// function drawRandomWalls(walls) {
+//     for(let i = 0; i < parseInt(walls); i++) {
+//         let randomModel = randomNumber(0, 3);
+//         let randomCords = [randomNumber(1, parseInt((mapSize / 2) + 1)), randomNumber(1, parseInt((mapSize / 2) + 1))];
+//         console.log('randomCords', randomCords);
+
+//         switch (randomModel) {
+//             case 0:
+//                 wallModelGuide.modelT(randomCords);
+//                 break;
+//             case 1:
+//                 wallModelGuide.modelC(randomCords);
+//                 break;
+//             case 2:
+//                 wallModelGuide.modelZ(randomCords);
+//                 break;
+//             default:
+//                 wallModelGuide.modelI(randomCords);
+//                 break;
+//         }
+//     }
+// }
 
 let ninjamanCords = {
     x: 1,
@@ -329,14 +430,14 @@ function isMoveValid(nextMove, e) {
     if(ninjamanHasMove) {
         // LEFT || RIGHT
         if(e.keyCode == 37 || e.keyCode == 39) {
-            if(map[ninjamanCords.x][nextMove] !== 1) {
+            if(map[ninjamanCords.x][nextMove] !== 1 && map[ninjamanCords.x][nextMove] !== 4) {
                 return true;
             }
             return false;
         } 
         // UP || DOWN
         else if (e.keyCode == 38 || e.keyCode == 40) {
-            if(map[nextMove][ninjamanCords.y] !== 1) {
+            if(map[nextMove][ninjamanCords.y] !== 1 && map[nextMove][ninjamanCords.y] !== 4) {
                 return true;
             }
             return false;
@@ -357,7 +458,6 @@ function isMapBlank() {
 // Cords ✔
 function eat(nextMove, e) {
     let data = {};
-    isMapBlank();
 
     if(e.keyCode == 37 || e.keyCode == 39) {
         data.element = map[ninjamanCords.x][nextMove];
@@ -380,6 +480,8 @@ function eat(nextMove, e) {
             map[ninjamanCords.x][nextMove] = 0;
         }
     }
+
+    isMapBlank();
 
     scoreContainer.querySelector('span').innerHTML = score;
 }
@@ -430,6 +532,25 @@ function moveNinjaman(e) {
     spawnCharacter();
 }
 
+function selectRandomMap() {
+    let randomModel = randomNumber(0, Object.keys(mapModels).length);
+
+    switch (randomModel) {
+        case 0:
+            mapModels.model1();
+            break;
+        case 1:
+            mapModels.model2();
+            break;
+        case 2:
+            mapModels.model3();
+            break;
+        default:
+            mapModels.model4();
+            break;
+    }
+}
+
 function start() {
     // Reset Score
     score = 0;
@@ -443,7 +564,8 @@ function start() {
 
     mapGenerator();
     // Too High = Enclosed items
-    drawRandomWalls(mapSize + parseFloat(mapSize / 2));
+    // drawRandomWalls(mapSize);
+    selectRandomMap()
     drawGhostsHouse();
     drawMap(); // Final Map
     spawnCharacter();
