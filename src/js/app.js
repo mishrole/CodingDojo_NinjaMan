@@ -249,20 +249,20 @@ let ninjamanCords;
 
 let ghostsCords = {
     'bluey': {
-        x: -1,
-        y: -1
+        x: 7,
+        y: 8
     },
     'pinky': {
-        x: -1,
-        y: -1
+        x: 8,
+        y: 7
     },
     'pumpky': {
-        x: -1,
-        y: -1
+        x: 8,
+        y: 8
     },
     'red': {
-        x: -1,
-        y: -1
+        x: 8,
+        y: 9
     }
 }
 
@@ -413,6 +413,7 @@ function drawGhostsHouse() {
 function setGhostCords(ghost, index) {
     ghostsCords[ghost].x = ghostsHouseCords[index][0];
     ghostsCords[ghost].y = ghostsHouseCords[index][1];
+    // console.log(`ghost ${ghost} [${ghostsHouseCords[index][0]}, ${ghostsHouseCords[index][1]}]`)
 }
 
 function spawnGhost(ghost) {
@@ -502,6 +503,7 @@ function moveNinjaman(e) {
         ninjaman.style.transform = 'scale(-1, 1)';
         
         if(isMoveValid(nextMove, e)) {
+            ninjamanCords.currentDirection = 37;
             ninjamanCords.y--;
             eat(nextMove, e);
         }
@@ -512,6 +514,7 @@ function moveNinjaman(e) {
         ninjaman.style.transform = 'rotate(270deg)';
 
         if(isMoveValid(nextMove, e)) {
+            ninjamanCords.currentDirection = 38;
             ninjamanCords.x--;
             eat(nextMove, e);
         }
@@ -522,6 +525,7 @@ function moveNinjaman(e) {
         ninjaman.style.transform = '';
 
         if(isMoveValid(nextMove, e)) {
+            ninjamanCords.currentDirection = 39;
             ninjamanCords.y++;
             eat(nextMove, e);
         } 		
@@ -532,6 +536,7 @@ function moveNinjaman(e) {
         ninjaman.style.transform = 'rotate(90deg)';
 
         if(isMoveValid(nextMove, e)) {
+            ninjamanCords.currentDirection = 40;
             ninjamanCords.x++;
             eat(nextMove, e);
         }
@@ -587,18 +592,14 @@ function start() {
     // Reset Ninja Direction
     ninjaman.style.transform = '';
 
-    // Set Ghosts coords
+    // Set Ghosts coords X    -  Const cords
     Object.keys(ghostsCords).forEach((key, index) => {
         setGhostCords(key, index);
         spawnGhost(key);
     });
 
-    let ghostMoveInterval = setInterval(() => {
-        if(isGameOver) {
-            clearInterval(ghostMoveInterval);
-        }
 
-        /*
+    /*
         - ¿Cuál va a ser la dirección de su primer movimiento?
         - ¿Cómo se va a elegir esa dirección?
 
@@ -613,117 +614,121 @@ function start() {
                     Si ghost.y < ninjaman.y entonces sumo ghost.y + 1 y se mueve hacia la derecha (column + 1)
                 Determinar cuál de estas sumas o restas en [x, y] me da el resultado más cercano al ninjaman
         3. Si tiene más de una dirección posible y la misma distancia, elegir con random
-        */
+    */
+
+
+    // Dentro de la función Start se ejecuta el intervalo que moverá al fantasma cada medio segundo
+
+    let ghostMoveInterval = setInterval(() => {
+        if(isGameOver) {
+            clearInterval(ghostMoveInterval);
+        }
 
         // ¿A dónde sí puede ir?
 
+        // OJO: NO ESTOY CONTROLANDO NEGATIVOS AL RESTAR
         let nextMoveUp = ghostsCords['bluey'].x - 1 >= 1 ? ghostsCords['bluey'].x - 1 : ghostsCords['bluey'].x;
         let nextMoveDown = ghostsCords['bluey'].x + 1 <= mapSize - 2 ? ghostsCords['bluey'].x + 1 : ghostsCords['bluey'].x;
         let nextMoveLeft = ghostsCords['bluey'].y - 1 >= 1 ? ghostsCords['bluey'].y - 1 : ghostsCords['bluey'].y;
-        let nextMoveRight = ghostsCords['bluey'].y + 1 <= mapSize - 2 ? ghostsCords['bluey'].y + 1 :  ghostsCords['bluey'].y; 
+        let nextMoveRight = ghostsCords['bluey'].y + 1 <= mapSize - 2 ? ghostsCords['bluey'].y + 1 :  ghostsCords['bluey'].y;
 
         let moves = {
             up: {
                 isAvailable: false,
-                position: [],
-                minMovesToNinjaman: [],
-                isBestPosition: false
+                possibleNextPosition: [],
+                nextDistance: [],
+                isBestPosition: false,
+                currentGhostPosition: [],
+                currentNinjaPosition: []
             },
             down: {
                 isAvailable: false,
-                position: [],
-                minMovesToNinjaman: [],
-                isBestPosition: false
+                possibleNextPosition: [],
+                nextDistance: [],
+                isBestPosition: false,
+                currentGhostPosition: [],
+                currentNinjaPosition: []
             },
             left: {
                 isAvailable: false,
-                position: [],
-                minMovesToNinjaman: [],
-                isBestPosition: false
+                possibleNextPosition: [],
+                nextDistance: [],
+                isBestPosition: false,
+                currentGhostPosition: [],
+                currentNinjaPosition: []
             },
             right: {
                 isAvailable: false,
-                position: [],
-                minMovesToNinjaman: [],
-                isBestPosition: false
+                possibleNextPosition: [],
+                nextDistance: [],
+                isBestPosition: false,
+                currentGhostPosition: [],
+                currentNinjaPosition: []
             },
             upLeft: {
                 isAvailable: false,
-                position: [],
-                minMovesToNinjaman: [],
-                isBestPosition: false
+                possibleNextPosition: [],
+                nextDistance: [],
+                isBestPosition: false,
+                currentGhostPosition: [],
+                currentNinjaPosition: []
             },
             upRight: {
                 isAvailable: false,
-                position: [],
-                minMovesToNinjaman: [],
-                isBestPosition: false
+                possibleNextPosition: [],
+                nextDistance: [],
+                isBestPosition: false,
+                currentGhostPosition: [],
+                currentNinjaPosition: []
             },
             downLeft: {
                 isAvailable: false,
-                position: [],
-                minMovesToNinjaman: [],
-                isBestPosition: false
+                possibleNextPosition: [],
+                nextDistance: [],
+                isBestPosition: false,
+                currentGhostPosition: [],
+                currentNinjaPosition: []
             },
             downRight: {
                 isAvailable: false,
-                position: [],
-                minMovesToNinjaman: [],
-                isBestPosition: false
+                possibleNextPosition: [],
+                nextDistance: [],
+                isBestPosition: false,
+                currentGhostPosition: [],
+                currentNinjaPosition: []
             },
         }
+
+        // Difference between PossibleNextPosition & NinjaManCords
 
         // UP
         if(map[nextMoveUp][ghostsCords['bluey'].y] !== 1 && map[nextMoveUp][ghostsCords['bluey'].y] !== 4) {
             moves.up.isAvailable = true;
-            moves.up.position = [nextMoveUp, ghostsCords['bluey'].y];
-            moves.up.minMovesToNinjaman = [nextMoveUp - ninjamanCords.x, ghostsCords['bluey'].y - ninjamanCords.y];
+            moves.up.possibleNextPosition = [nextMoveUp, ghostsCords['bluey'].y];
+            moves.up.nextDistance = [nextMoveUp - ninjamanCords.x, ghostsCords['bluey'].y - ninjamanCords.y];
+            moves.up.currentGhostPosition = [ghostsCords['bluey'].x, ghostsCords['bluey'].y]
+            moves.up.currentNinjaPosition = [ninjamanCords.x, ninjamanCords.y]
         } else {
             moves.up.isAvailable = false;
         }
-
-        // UP + RIGHT
-        if(map[nextMoveUp][nextMoveRight] !== 1 && map[nextMoveUp][nextMoveRight] !== 4) {
-            moves.upRight.isAvailable = true;
-            moves.upRight.position = [nextMoveUp,nextMoveRight];
-            moves.upRight.minMovesToNinjaman = [nextMoveUp - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
-        }
-
-        // UP + LEFT
-        if(map[nextMoveUp][nextMoveLeft] !== 1 && map[nextMoveUp][nextMoveLeft] !== 4) {
-            moves.upLeft.isAvailable = true;
-            moves.upLeft.position = [nextMoveUp, nextMoveLeft];
-            moves.upLeft.minMovesToNinjaman = [nextMoveUp - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
-        }
-
         // DOWN
         if(map[nextMoveDown][ghostsCords['bluey'].y] !== 1 && map[nextMoveDown][ghostsCords['bluey'].y] !== 4) {
             moves.down.isAvailable = true;
-            moves.down.position = [nextMoveDown, ghostsCords['bluey'].y];
-            moves.down.minMovesToNinjaman = [nextMoveDown - ninjamanCords.x, ghostsCords['bluey'].y - ninjamanCords.y];
+            moves.down.possibleNextPosition = [nextMoveDown, ghostsCords['bluey'].y];
+            moves.down.nextDistance = [nextMoveDown - ninjamanCords.x, ghostsCords['bluey'].y - ninjamanCords.y];
+            moves.down.currentGhostPosition = [ghostsCords['bluey'].x, ghostsCords['bluey'].y]
+            moves.down.currentNinjaPosition = [ninjamanCords.x, ninjamanCords.y]
         } else {
             moves.down.isAvailable = false;
-        }
-
-        // DOWN + RIGHT
-        if(map[nextMoveDown][nextMoveRight] !== 1 && map[nextMoveDown][nextMoveRight] !== 4) {
-            moves.downRight.isAvailable = true;
-            moves.downRight.position = [nextMoveDown, nextMoveRight];
-            moves.downRight.minMovesToNinjaman = [nextMoveDown - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
-        }
-
-        // DOWN + LEFT
-        if(map[nextMoveDown][nextMoveLeft] !== 1 && map[nextMoveDown][nextMoveLeft] !== 4) {
-            moves.downLeft.isAvailable = true;
-            moves.downLeft.position = [nextMoveDown, nextMoveLeft];
-            moves.downLeft.minMovesToNinjaman = [nextMoveDown - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
         }
 
         // LEFT
         if(map[ghostsCords['bluey'].x][nextMoveLeft] !== 1 && map[ghostsCords['bluey'].x][nextMoveLeft] !== 4) {
             moves.left.isAvailable = true;
-            moves.left.position = [ghostsCords['bluey'].x, nextMoveLeft];
-            moves.left.minMovesToNinjaman = [ghostsCords['bluey'].x - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
+            moves.left.possibleNextPosition = [ghostsCords['bluey'].x, nextMoveLeft];
+            moves.left.nextDistance = [ghostsCords['bluey'].x - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
+            moves.left.currentGhostPosition = [ghostsCords['bluey'].x, ghostsCords['bluey'].y]
+            moves.left.currentNinjaPosition = [ninjamanCords.x, ninjamanCords.y]
         } else {
             moves.left.isAvailable = false;
         }
@@ -731,57 +736,147 @@ function start() {
         // RIGHT
         if(map[ghostsCords['bluey'].x][nextMoveRight] !== 1 && map[ghostsCords['bluey'].x][nextMoveRight] !== 4) {
             moves.right.isAvailable = true;
-            moves.right.position = [ghostsCords['bluey'].x, nextMoveRight];
-            moves.right.minMovesToNinjaman = [ghostsCords['bluey'].x - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
+            moves.right.possibleNextPosition = [ghostsCords['bluey'].x, nextMoveRight];
+            moves.right.nextDistance = [ghostsCords['bluey'].x - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
+            moves.right.currentGhostPosition = [ghostsCords['bluey'].x, ghostsCords['bluey'].y]
+            moves.right.currentNinjaPosition = [ninjamanCords.x, ninjamanCords.y]
         } else {
             moves.right.isAvailable = false;
         }
 
+        /*
+
+        // UP + RIGHT
+        if(map[nextMoveUp][nextMoveRight] !== 1 && map[nextMoveUp][nextMoveRight] !== 4) {
+            moves.upRight.isAvailable = true;
+            moves.upRight.possibleNextPosition = [nextMoveUp,nextMoveRight];
+            moves.upRight.nextDistance = [nextMoveUp - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
+        } else {
+            moves.upRight.isAvailable = false;
+        }
+
+        // UP + LEFT
+        if(map[nextMoveUp][nextMoveLeft] !== 1 && map[nextMoveUp][nextMoveLeft] !== 4) {
+            moves.upLeft.isAvailable = true;
+            moves.upLeft.possibleNextPosition = [nextMoveUp, nextMoveLeft];
+            moves.upLeft.nextDistance = [nextMoveUp - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
+        } else {
+            moves.upLeft.isAvailable = false;
+        }
+
+
+        // DOWN + RIGHT
+        if(map[nextMoveDown][nextMoveRight] !== 1 && map[nextMoveDown][nextMoveRight] !== 4) {
+            moves.downRight.isAvailable = true;
+            moves.downRight.possibleNextPosition = [nextMoveDown, nextMoveRight];
+            moves.downRight.nextDistance = [nextMoveDown - ninjamanCords.x, nextMoveRight - ninjamanCords.y];
+        } else {
+            moves.downRight.isAvailable = false;
+        }
+
+        // DOWN + LEFT
+        if(map[nextMoveDown][nextMoveLeft] !== 1 && map[nextMoveDown][nextMoveLeft] !== 4) {
+            moves.downLeft.isAvailable = true;
+            moves.downLeft.possibleNextPosition = [nextMoveDown, nextMoveLeft];
+            moves.downLeft.nextDistance = [nextMoveDown - ninjamanCords.x, nextMoveLeft - ninjamanCords.y];
+        } else {
+            moves.downLeft.isAvailable = false;
+        } 
+    */
+
+        // console.log(moves);
+
         const asArray = Object.entries(moves);
         const filtered = Object.fromEntries(asArray.filter(([key, value]) => value.isAvailable));
 
-        let minMoves = {
-            minCoords: [],
-            name: ''
+        let selectedMove = {
+            nextDirection: '',
+            nextMove: []
         };
 
-        // Aquí debería filtrar solo 1 movimiento
+        let minCoords;
+
+        // Filter closest Move
         if(Object.keys(filtered).length > 0) {
-            console.log(Object.keys(filtered).length);
             Object.keys(filtered).forEach((key, index) => {
+
+                // ¿POr qué saco la siguiente distancia allá arriba? Las coordenadas del ninja cambian más rápido que esto
+
+
+                // Filtro la menor distancia
+
                 if(index == 0) {
-                    minMoves.minCoords = filtered[key].minMovesToNinjaman;
-                    minMoves.name = key;
+                    // console.log("entra a index 0")
+                    minCoords = filtered[key].nextDistance;
+                    selectedMove.nextDirection = key;
+                    selectedMove.nextMove = filtered[key].possibleNextPosition;
                 } else {
-                    if(filtered[key].minMovesToNinjaman[0] <= minMoves.minCoords[0] &&
-                         filtered[key].minMovesToNinjaman[1] <= minMoves.minCoords[1]) {
-                        minMoves.minCoords = filtered[key].minMovesToNinjaman
-                        minMoves.name = key;
+                    // console.log("entra a otro index");
+                    // Si el próximo índice tiene menores coordenadas que el primer índice guardado, reemplazo
+
+                   // Si la distancia tiene negativo, debe intentar ir positivo hacia distancia 0,0
+
+
+
+                    if(filtered[key].nextDistance[0] <= minCoords[0] &&
+                         filtered[key].nextDistance[1] <= minCoords[1]) {
+
+                            // if(filtered[key].nextDistance[0] > 0 && filtered[key].nextDistance[1] > 0) {
+                            //     minCoords = filtered[key].nextDistance // AQUÍ
+                            //     selectedMove.nextDirection = key;
+                            //     selectedMove.nextMove = filtered[key].possibleNextPosition;
+                            // }
+
+                            minCoords = filtered[key].nextDistance // AQUÍ
+
+                            // Puede que X sea menor, o Y sea menor, o ambos sean menores
+                            // Necesito saber cuál de estas posibles direcciones válidas es la mejor
+                            
+                            // En algún punto se están yendo a negativo (DIFERENCIA)
+
+                            selectedMove.nextDirection = key;
+                            selectedMove.nextMove = filtered[key].possibleNextPosition;
+
+
+                            // Cuando x o y en movimientos mínimos es 0, debo elegir la mejor dirección
+                            // if(filtered[key].nextDistance[0] === 0 && filtered[key].nextDistance[1] === 0) {
+                                
+                                
+                            // }
+
                     }
                 }
+
+                console.log("Eligiendo")
+                console.log('posibles:', filtered);
+                console.log('distancia menor:', minCoords);
+                console.log('posición de ninja', ninjamanCords);
+                console.log('posición de fantasma', ghostsCords);
+
             });
     
         }
 
-        console.log('moves', moves);
-        console.log('filtered', filtered);
-        console.log('minMoves', minMoves);
+        console.log('moves:', moves);
+        console.log('selectedMove', selectedMove);
+        console.log('----')
 
-        // ghostsCords['bluey'].x = minMoves.minCoords[0];
-        // ghostsCords['bluey'].y = minMoves.minCoords[1];
-        ghostsCords['bluey'].x = filtered[minMoves.name].position[0]
-        ghostsCords['bluey'].y = filtered[minMoves.name].position[1];
+        // Update Ghost Position
+        
+        if(!isGameOver) {
+            // console.log(filtered)
+            ghostsCords['bluey'].x = filtered[selectedMove.nextDirection].possibleNextPosition[0]
+            ghostsCords['bluey'].y = filtered[selectedMove.nextDirection].possibleNextPosition[1];
+            
+            if(ghostsCords['bluey'].x === ninjamanCords.x && ghostsCords['bluey'].y === ninjamanCords.y) {
+                isGameOver = true;
+                clearInterval(ghostMoveInterval);
+            }
 
-        if(ghostsCords['bluey'].x === ninjamanCords.x && ghostsCords['bluey'].y === ninjamanCords.y) {
-            isGameOver = true;
+            spawnGhost('bluey'); // ¡Genial! ¡Se mueve!
         }
 
-        // TODO: Determinar la mejor dirección
-        // LA DIFERENCIA DE MINMOVES Y POSITION EN MOVES[] ME DA LAS COORDENADAS DE NINJAMAN
-        
-        spawnGhost('bluey'); // ¡Genial! ¡Se mueve!
-
-    }, 1000);
+    }, 500);
 }
 
 start();
@@ -793,5 +888,6 @@ document.onkeydown = function(e) {
 }
 
 btnRefresh.addEventListener('click', function() {
+    isGameOver = false;
     start();
 });
