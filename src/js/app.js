@@ -616,6 +616,80 @@ function start() {
         3. Si tiene más de una dirección posible y la misma distancia, elegir con random
     */
 
+    // ¿Cuál es la dirección actual del Ninja?
+    function currentNinjaDirection(ghost) {
+        let ninjaX, ninjaY;
+        // Comparar cada X con cada X y cada Y con cada Y para encontrar las 4 posibilidades y filtrar la mejor
+
+        if (ghostsCords[ghost].x === ninjamanCords.x && ghostsCords[ghost].y === ninjamanCords.y) {
+            // Están en el mismo lugar
+            ninjaX = 'same';
+            ninjaY = 'same';
+        } else {
+            // if(ghostsCords[ghost].x === ninjamanCords.x) {
+            //     // Están en el mismo lugar
+            //     ninjaX = 'same';
+            // }
+    
+            // if(ghostsCords[ghost].y === ninjamanCords.y) {
+            //     // Están en el mismo lugar
+            //     ninjaY = 'same';
+            // }
+
+            // Cuando ambos son mayores, y cuando ambos son menores
+            if(ghostsCords[ghost].x > ninjamanCords.x && ghostsCords[ghost].y > ninjamanCords.y) {
+                // Fantasma está abajo y a la derecha del Ninja
+                ninjaX = 'up';
+                ninjaY = 'left';
+            } else if(ghostsCords[ghost].x < ninjamanCords.x && ghostsCords[ghost].y < ninjamanCords.y) {
+                // Fantasma está arriba y a la izquierda del Ninja
+                ninjaX = 'down';
+                ninjaY = 'right';
+            }                // Cuando X es menor pero Y es mayor
+            else if(ghostsCords[ghost].x < ninjamanCords.x && ghostsCords[ghost].y > ninjamanCords.y) {
+                ninjaX = 'down';
+                ninjaY = 'left';
+                
+            } else if(ghostsCords[ghost].x > ninjamanCords.x && ghostsCords[ghost].y < ninjamanCords.y) {
+                // Cuando X es mayor y Y es menor
+                ninjaX = 'up';
+                ninjaY = 'right';
+            } else {
+                if(ghostsCords[ghost].x === ninjamanCords.x && ghostsCords[ghost].y !== ninjamanCords.y) {
+                    // Cuando x es igual pero y no
+                    if(ghostsCords[ghost].y < ninjamanCords.y) {
+                        // Ninja está a la derecha de fantasma
+                        ninjaX = 'same';
+                        ninjaY = 'right'
+                    } else if(ghostsCords[ghost].y > ninjamanCords.y) {
+                        // Ninja está izquierda de fantasma
+                        ninjaX = 'same';
+                        ninjaY = 'left';
+                    }
+                } else if (ghostsCords[ghost].x !== ninjamanCords.x && ghostsCords[ghost].y === ninjamanCords.y) {
+                    // Cuando x no es igual pero y sí
+                    if(ghostsCords[ghost].x < ninjamanCords.x) {
+                        // Ninja está abajo de fantasma
+                        ninjaX = 'down';
+                        ninjaY = 'same';
+                    } else if(ghostsCords[ghost].x > ninjamanCords.x) {
+                        // Ninja está arriba de fantasma
+                        ninjaX = 'up';
+                        ninjaY = 'same';
+                    }
+                } else {
+                    console.error("NO ENTRA EN NADA 1");
+                    console.warn('DATA', ghostsCords[ghost], ninjamanCords)
+                }
+            }
+            
+            
+        }
+        
+
+        return [ninjaX, ninjaY];
+    }
+
 
     // Dentro de la función Start se ejecuta el intervalo que moverá al fantasma cada medio segundo
 
@@ -796,12 +870,137 @@ function start() {
 
         let minCoords;
 
+        let mishrole = {
+            result: []
+        };
+
+        Object.keys(filtered).forEach((key, index) => {
+            let ninjaDirection = currentNinjaDirection('bluey');
+
+            let bestPosX, bestPosY;
+
+            if(Object.keys(filtered).length > 1) {
+                // Si ninguno de los dos es indefinido
+                if(typeof ninjaDirection[0] !== 'undefined' && typeof ninjaDirection[1] !== 'undefined') {
+                    // Si es 'same' en ambos
+                    if (ninjaDirection[0] === 'same' && ninjaDirection[1] === 'same') {
+                        // Se queda en la posición de Ninja en X y en Y
+                        mishrole.result = [ninjamanCords.x, ninjamanCords.y];
+                        bestPosX = ninjamanCords.x;
+                        bestPosY = ninjamanCords.y;
+                        // Si solo X es 'same'
+                    } else if(ninjaDirection[0] === 'same' && typeof ninjaDirection[1] !== 'undefined') {
+                        // Se queda en X de Ninja y toma Y de posible posición
+                        if(Object.keys(filtered).find(elemento => elemento === ninjaDirection[1])) {
+                            mishrole.result = [ninjamanCords.x, filtered[ninjaDirection[1]].possibleNextPosition[1]]
+                            bestPosX = ninjamanCords.x;
+                            bestPosY = filtered[ninjaDirection[1]].possibleNextPosition[1];
+                            console.log('Dirección de Ninja [1]', ninjaDirection[1], 'Filtered', filtered);
+                        }
+                        // Si solo Y es 'same'
+                    } else if(ninjaDirection[1] === 'same' && typeof ninjaDirection[0] !== 'undefined') {
+                        // Se queda en Y de Ninja y toma la X de posible posición
+                        if(Object.keys(filtered).find(elemento => elemento === ninjaDirection[0])) {
+                            mishrole.result = [filtered[ninjaDirection[0]].possibleNextPosition[0] , ninjamanCords.y]
+                            bestPosX = filtered[ninjaDirection[0]].possibleNextPosition[0];
+                            bestPosY = ninjamanCords.y;
+                        }
+                    } else {
+                        // Ninguna es 'same', se compara con las keys del objeto filtrado
+                        // Si la key se encuentra en X o en Y
+                        // if(key === ninjaDirection[0] && key === ninjaDirection[1]) {
+                        //     mishrole.result = filtered[key].possibleNextPosition;
+                        //     bestPosX = filtered[key].possibleNextPosition[0];
+                        //     bestPosY = filtered[key].possibleNextPosition[1];
+                        // } else if(key === ninjaDirection[0]) {
+                        //     mishrole.result = [filtered[key].possibleNextPosition];
+                        //     bestPosX = filtered[key].possibleNextPosition[0];
+                        //     bestPosY = filtered[key].possibleNextPosition[1];
+                        // } else {
+                        //     console.log('PRUEBAAAAAA');
+                        // }
+                            // } else {
+                        //     // [undefined, 'left'];
+                        //     console.log("NO COINCIDE CON NADA")
+                        //}
+                        console.warn('No revisado', ninjaDirection);
+
+                        // [UP, LEFT] ENTRA ACÁ
+
+
+                        if(key === ninjaDirection[0] && key === ninjaDirection[1]) {
+                            mishrole.result = filtered[key].possibleNextPosition;
+                            bestPosX = filtered[key].possibleNextPosition[0];
+                            bestPosY = filtered[key].possibleNextPosition[1];
+                        } else if(key === ninjaDirection[0]) {
+                            mishrole.result = [filtered[ninjaDirection[0]].possibleNextPosition];
+                            bestPosX = filtered[ninjaDirection[0]].possibleNextPosition[0];
+                            bestPosY = filtered[ninjaDirection[0]].possibleNextPosition[1];
+                        } else if(key === ninjaDirection[1]) {
+                            mishrole.result = [filtered[ninjaDirection[1]].possibleNextPosition];
+                            bestPosX = filtered[ninjaDirection[1]].possibleNextPosition[0];
+                            bestPosY = filtered[ninjaDirection[1]].possibleNextPosition[1];
+                        } else {
+                            // Acá está entrando en ocasiones
+                            if(Object.keys(filtered).find(elemento => elemento === ninjaDirection[0]) &&
+                            Object.keys(filtered).find(elemento => elemento === ninjaDirection[1])) {
+                                mishrole.result = filtered[ninjaDirection[0]].possibleNextPosition;
+                                bestPosX = filtered[ninjaDirection[0]].possibleNextPosition[0];
+                                bestPosY = filtered[ninjaDirection[0]].possibleNextPosition[1];
+                            } else {
+                                mishrole.result = filtered[key].possibleNextPosition;
+                                bestPosX = filtered[key].possibleNextPosition[0];
+                                bestPosY = filtered[key].possibleNextPosition[1];
+                                console.log("ENTRA EN ELSE NO REVISADO con key", key, "y direction ", ninjaDirection);
+                            }
+
+
+                        }
+                          
+
+                        
+
+                        
+                    }
+                } else {
+                    // Alguno es indefinido
+                    if(typeof ninjaDirection[0] === 'undefined' && typeof ninjaDirection[1] === 'undefined') {
+                        console.error("AMBOS SON UNDEFINED");
+                    } else {
+                        // Si solo X es indefinido
+                        if (typeof ninjaDirection[0] === 'undefined') {
+                            // Si la key es igual a Y
+                            // console.warn('1: '+filtered[key].possibleNextPosition, `${ninjaDirection}`);
+                            mishrole.result = filtered[key].possibleNextPosition;
+                            bestPosX = filtered[key].possibleNextPosition[0];
+                            bestPosY = filtered[key].possibleNextPosition[1];
+                        // Si solo Y es indefinido
+                        } else if (typeof ninjaDirection[1] === 'undefined') {
+                            // console.warn('2: '+filtered[key].possibleNextPosition, `${ninjaDirection}`)
+                            mishrole.result = filtered[key].possibleNextPosition;
+                            bestPosX = filtered[key].possibleNextPosition[0];
+                            bestPosY = filtered[key].possibleNextPosition[1];
+                        }
+                    }
+                    
+                }
+            } else {
+                mishrole.result = filtered[key].possibleNextPosition;
+                bestPosX = filtered[key].possibleNextPosition[0];
+                bestPosY = filtered[key].possibleNextPosition[1];
+            }
+
+            console.warn('DIRECCIÓN DEL NINJA, ¿EN CORRECTA?', ninjaDirection);
+            console.log('RESULTADO', mishrole);
+            // console.log('VAR BEST POS', bestPosX, bestPosY);
+        });
+
         // Filter closest Move
         if(Object.keys(filtered).length > 0) {
             Object.keys(filtered).forEach((key, index) => {
 
                 // ¿POr qué saco la siguiente distancia allá arriba? Las coordenadas del ninja cambian más rápido que esto
-
+                // A veces x es menor pero Y es mayor, ese es el problema <----------------
 
                 // Filtro la menor distancia
 
@@ -851,7 +1050,7 @@ function start() {
                 console.log('posibles:', filtered);
                 console.log('distancia menor:', minCoords);
                 console.log('posición de ninja', ninjamanCords);
-                console.log('posición de fantasma', ghostsCords);
+                // console.log('posición de fantasma', ghostsCords);
 
             });
     
@@ -865,8 +1064,11 @@ function start() {
         
         if(!isGameOver) {
             // console.log(filtered)
-            ghostsCords['bluey'].x = filtered[selectedMove.nextDirection].possibleNextPosition[0]
-            ghostsCords['bluey'].y = filtered[selectedMove.nextDirection].possibleNextPosition[1];
+            // ghostsCords['bluey'].x = filtered[selectedMove.nextDirection].possibleNextPosition[0]
+            // ghostsCords['bluey'].y = filtered[selectedMove.nextDirection].possibleNextPosition[1];
+
+            ghostsCords['bluey'].x = mishrole.result[0]
+            ghostsCords['bluey'].y = mishrole.result[1];
             
             if(ghostsCords['bluey'].x === ninjamanCords.x && ghostsCords['bluey'].y === ninjamanCords.y) {
                 isGameOver = true;
